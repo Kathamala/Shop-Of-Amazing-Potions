@@ -1,0 +1,3 @@
+INGREDIENTE_id,JOGADOR_id,quantidade
+
+INGREDIENTE_id,JOGADOR_id -> quantidade

@@ -1,0 +1,3 @@
+JOGADOR_id,NPC_id,POCAO_id
+
+NPC_id -> JOGADOR_id,POCAO_id

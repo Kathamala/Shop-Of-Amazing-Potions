@@ -1,0 +1,3 @@
+id,valor,nome,tempo_necessario
+
+id -> nome,valor,tempo_necessario
