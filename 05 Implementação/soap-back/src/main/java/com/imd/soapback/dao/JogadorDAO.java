@@ -86,6 +86,25 @@ public class JogadorDAO implements IJogador {
 	}
 	
 	@Override
+	public Jogador searchByName(String name) {
+        Jogador jogador = new Jogador();
+
+		try {
+			conectar();
+            String sql = "SELECT * FROM JOGADOR WHERE NOME=" + name;
+            ResultSet rs = comando.executeQuery(sql);
+            if (rs.next()) {
+				jogador = this.buildJogador(rs);
+            }
+        } catch (SQLException SQLe) {
+            SQLe.printStackTrace();
+        } catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+        return jogador;
+	}
+
+	@Override
 	public void remove(Jogador jogador) {
         
         	String sql ="DELETE FROM JOGADOR WHERE id=" + jogador.getId() + ";";

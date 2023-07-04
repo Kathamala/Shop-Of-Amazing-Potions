@@ -8,6 +8,7 @@ public interface IJogador {
 
 	 public Jogador search(Integer id);
 	 public List<Jogador> searchAll();
+	 public Jogador searchByName(String name);
 	 public void remove(Jogador jogador);
 	 public void remove(Integer id);
 	 public void update(Jogador jogador);
