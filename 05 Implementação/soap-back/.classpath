@@ -6,16 +6,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="Bibliotecas/Hibernate3.5.5/antlr-2.7.6.jar"/>
-	<classpathentry kind="lib" path="Bibliotecas/Hibernate3.5.5/commons-collections-3.1.jar"/>
-	<classpathentry kind="lib" path="Bibliotecas/Hibernate3.5.5/dom4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="Bibliotecas/Hibernate3.5.5/hibernate3.jar"/>
-	<classpathentry kind="lib" path="Bibliotecas/Hibernate3.5.5/javassist-3.9.0.GA.jar"/>
-	<classpathentry kind="lib" path="Bibliotecas/Hibernate3.5.5/jta-1.1.jar"/>
-	<classpathentry kind="lib" path="Bibliotecas/Hibernate3.5.5/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="Bibliotecas/Hibernate3.5.5/slf4j-log4j12-1.7.5.jar"/>
 	<classpathentry kind="lib" path="Bibliotecas/mysql-connector-java-8.0.21.jar" sourcepath="C:/Users/marce/.m2/repository/mysql/mysql-connector-java/8.0.21/mysql-connector-java-8.0.21-sources.jar"/>
-	<classpathentry kind="lib" path="Bibliotecas/postgresql-42.3.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
