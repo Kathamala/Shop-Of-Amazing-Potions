@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Vector;
 
 import main.java.com.imd.soapback.connection.ConFactory;
-import main.java.com.imd.soapback.interfaceDAO.IJogador;
-import main.java.com.imd.soapback.model.Jogador;
+import main.java.com.imd.soapback.interfaceDAO.ICondicoes;
+import main.java.com.imd.soapback.model.Condicoes;
 
-public class JogadorDAO implements IJogador {
+public class CondicoesDAO implements ICondicoes {
 
 	private String 	URL;
 	private String NOME;
@@ -20,45 +20,45 @@ public class JogadorDAO implements IJogador {
 	private Connection con;  
     private Statement comando;
 	
-	public JogadorDAO(String server, String user, String password) throws SQLException {
+	public CondicoesDAO(String server, String user, String password) throws SQLException {
 		this.URL = server;
 		this.NOME = user;
 		this.SENHA = password;
 	}
 
 	@Override
-	public Jogador search(Integer id) {
-        Jogador jogador = new Jogador();
+	public Condicoes search(Integer id) {
+        Condicoes obj = new Condicoes();
 
 		try {
 			conectar();
-            String sql = "SELECT * FROM JOGADOR WHERE ID=" + id;
+            String sql = "SELECT * FROM CONDICOES WHERE ID=" + id;
             ResultSet rs = comando.executeQuery(sql);
             if (rs.next()) {
-				jogador = this.buildJogador(rs);
+				obj = this.buildCondicoes(rs);
             }
         } catch (SQLException SQLe) {
             SQLe.printStackTrace();
         } catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-        return jogador;
+        return obj;
 	}
 
 	@Override
-	public List<Jogador> searchAll() {
+	public List<Condicoes> searchAll() {
 		synchronized (this) {
             ResultSet rs = null;
             
-	        List<Jogador> jogadores = new Vector<Jogador>();
+	        List<Condicoes> list = new Vector<Condicoes>();
 	        try {
 	        	conectar();
 				
 	            try {
-	                rs = comando.executeQuery("SELECT * FROM JOGADOR");
+	                rs = comando.executeQuery("SELECT * FROM CONDICOES");
 	                while (rs.next()) {
-	    				Jogador e = this.buildJogador(rs);
-	    				jogadores.add(e);
+	    				Condicoes e = this.buildCondicoes(rs);
+	    				list.add(e);
 	                }
 	            } finally {
         			if (rs != null) {
@@ -81,14 +81,14 @@ public class JogadorDAO implements IJogador {
 	        } catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-	        return jogadores;
+	        return list;
         }
 	}
 	
 	@Override
-	public void remove(Jogador jogador) {
+	public void remove(Condicoes obj) {
         
-        	String sql ="DELETE FROM JOGADOR WHERE id=" + jogador.getId() + ";";
+        	String sql ="DELETE FROM CONDICOES WHERE id=" + obj.getId() + ";";
 			
 	    	try {
 				conectar();
@@ -105,7 +105,7 @@ public class JogadorDAO implements IJogador {
 
         try {
         	conectar();
-    		String sql ="DELETE FROM JOGADOR WHERE id=" + this.retornarValorStringBD(id.toString());
+    		String sql ="DELETE FROM CONDICOES WHERE id=" + this.retornarValorStringBD(id.toString());
     		System.out.println("%"+sql+"%");
 			comando.executeUpdate(sql);
 		} catch (SQLException e) {
@@ -117,12 +117,12 @@ public class JogadorDAO implements IJogador {
 	}
 
 	@Override
-	public void update(Jogador jogador) {
+	public void update(Condicoes obj) {
 			StringBuffer buffer = new StringBuffer();
-	        buffer.append("UPDATE JOGADOR SET ");
-	        buffer.append(returnFieldValuesBD(jogador));
+	        buffer.append("UPDATE CONDICOES SET ");
+	        buffer.append(returnFieldValuesBD(obj));
 	        buffer.append(" WHERE id=");
-	        buffer.append(jogador.getId());
+	        buffer.append(obj.getId());
 	        String sql = buffer.toString();
 	        
 	    	try {
@@ -137,12 +137,12 @@ public class JogadorDAO implements IJogador {
 	}
 
 	@Override
-	public void insert(Jogador jogador) {
+	public void insert(Condicoes obj) {
 			StringBuffer buffer = new StringBuffer();
-	        buffer.append("INSERT INTO JOGADOR (");
+	        buffer.append("INSERT INTO CONDICOES (");
 	        buffer.append(this.retornarCamposBD());
 	        buffer.append(") VALUES (");
-	        buffer.append(this.retornarValoresBD(jogador));
+	        buffer.append(this.retornarValoresBD(obj));
 	        buffer.append(")");
 	        String sql = buffer.toString();
 
@@ -157,29 +157,33 @@ public class JogadorDAO implements IJogador {
 	}
 		
 	protected String retornarCamposBD() {
-    	return "id, nome, dinheiro";
+    	return "id, nome, descricao, intensidade";
     }
     
-    protected String returnFieldValuesBD(Jogador j) {
+    protected String returnFieldValuesBD(Condicoes obj) {
 
         StringBuffer buffer = new StringBuffer();
         buffer.append("id=");
-        buffer.append(retornarValorStringBD(j.getId().toString()));
+        buffer.append(retornarValorStringBD(obj.getId().toString()));
         buffer.append(", nome=");
-        buffer.append(retornarValorStringBD(j.getNome()));
-        buffer.append(", dinheiro=");
-        buffer.append(retornarValorStringBD(j.getDinheiro().toString()));
+        buffer.append(retornarValorStringBD(obj.getNome()));
+        buffer.append(", descricao=");
+        buffer.append(retornarValorStringBD(obj.getDescricao()));
+        buffer.append(", intensidade=");
+        buffer.append(retornarValorStringBD(obj.getIntensidade().toString()));;
 
         return buffer.toString();
     }
     
-    protected String retornarValoresBD(Jogador j) {
+    protected String retornarValoresBD(Condicoes obj) {
     	return
-	        j.getId()
+	        obj.getId()
 	        + ", "
-	        + retornarValorStringBD(j.getNome())
+	        + retornarValorStringBD(obj.getNome())
 	        + ", "
-	        + j.getDinheiro();
+	        + retornarValorStringBD(obj.getDescricao())
+	        + ", "
+	        + obj.getIntensidade();
     }
     
     private String retornarValorStringBD(String valor) {
@@ -195,7 +199,7 @@ public class JogadorDAO implements IJogador {
     private void conectar() throws ClassNotFoundException, SQLException  {
         con = ConFactory.conexao(URL, NOME, SENHA);  
         con.setAutoCommit(false);
-        comando = con.createStatement();  
+        comando = con.createStatement();   
 	}	  
 
     public void commit() throws Exception {
@@ -204,6 +208,7 @@ public class JogadorDAO implements IJogador {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+    	
     }
     
 	public void cancelTransaction() throws Exception {
@@ -230,16 +235,17 @@ public class JogadorDAO implements IJogador {
 	    }
 	}
     
-    private Jogador buildJogador(ResultSet rs) {
-		Jogador jogador = new Jogador();
+    private Condicoes buildCondicoes(ResultSet rs) {
+		Condicoes obj = new Condicoes();
 		try {  
-			jogador.setId(rs.getInt("id"));
-			jogador.setNome(rs.getString("nome"));
-			jogador.setDinheiro(rs.getFloat("dinheiro"));
+			obj.setId(rs.getInt("id"));
+			obj.setNome(rs.getString("nome"));
+			obj.setDescricao(rs.getString("descricao"));
+			obj.setIntensidade(rs.getInt("intensidade"));
 
 		} catch (SQLException e) { 
 			e.printStackTrace();
 		}  
-		return jogador;
+		return obj;
     }
 }

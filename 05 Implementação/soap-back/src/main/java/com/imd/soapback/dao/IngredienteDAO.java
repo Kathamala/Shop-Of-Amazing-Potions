@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Vector;
 
 import main.java.com.imd.soapback.connection.ConFactory;
-import main.java.com.imd.soapback.interfaceDAO.IJogador;
-import main.java.com.imd.soapback.model.Jogador;
+import main.java.com.imd.soapback.interfaceDAO.IIngrediente;
+import main.java.com.imd.soapback.model.Ingrediente;
 
-public class JogadorDAO implements IJogador {
+public class IngredienteDAO implements IIngrediente {
 
 	private String 	URL;
 	private String NOME;
@@ -20,45 +20,45 @@ public class JogadorDAO implements IJogador {
 	private Connection con;  
     private Statement comando;
 	
-	public JogadorDAO(String server, String user, String password) throws SQLException {
+	public IngredienteDAO(String server, String user, String password) throws SQLException {
 		this.URL = server;
 		this.NOME = user;
 		this.SENHA = password;
 	}
 
 	@Override
-	public Jogador search(Integer id) {
-        Jogador jogador = new Jogador();
+	public Ingrediente search(Integer id) {
+        Ingrediente obj = new Ingrediente();
 
 		try {
 			conectar();
-            String sql = "SELECT * FROM JOGADOR WHERE ID=" + id;
+            String sql = "SELECT * FROM INGREDIENTE WHERE ID=" + id;
             ResultSet rs = comando.executeQuery(sql);
             if (rs.next()) {
-				jogador = this.buildJogador(rs);
+				obj = this.buildIngrediente(rs);
             }
         } catch (SQLException SQLe) {
             SQLe.printStackTrace();
         } catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-        return jogador;
+        return obj;
 	}
 
 	@Override
-	public List<Jogador> searchAll() {
+	public List<Ingrediente> searchAll() {
 		synchronized (this) {
             ResultSet rs = null;
             
-	        List<Jogador> jogadores = new Vector<Jogador>();
+	        List<Ingrediente> list = new Vector<Ingrediente>();
 	        try {
 	        	conectar();
 				
 	            try {
-	                rs = comando.executeQuery("SELECT * FROM JOGADOR");
+	                rs = comando.executeQuery("SELECT * FROM INGREDIENTE");
 	                while (rs.next()) {
-	    				Jogador e = this.buildJogador(rs);
-	    				jogadores.add(e);
+	    				Ingrediente e = this.buildIngrediente(rs);
+	    				list.add(e);
 	                }
 	            } finally {
         			if (rs != null) {
@@ -81,14 +81,14 @@ public class JogadorDAO implements IJogador {
 	        } catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-	        return jogadores;
+	        return list;
         }
 	}
 	
 	@Override
-	public void remove(Jogador jogador) {
+	public void remove(Ingrediente obj) {
         
-        	String sql ="DELETE FROM JOGADOR WHERE id=" + jogador.getId() + ";";
+        	String sql ="DELETE FROM INGREDIENTE WHERE id=" + obj.getId() + ";";
 			
 	    	try {
 				conectar();
@@ -105,7 +105,7 @@ public class JogadorDAO implements IJogador {
 
         try {
         	conectar();
-    		String sql ="DELETE FROM JOGADOR WHERE id=" + this.retornarValorStringBD(id.toString());
+    		String sql ="DELETE FROM INGREDIENTE WHERE id=" + this.retornarValorStringBD(id.toString());
     		System.out.println("%"+sql+"%");
 			comando.executeUpdate(sql);
 		} catch (SQLException e) {
@@ -117,12 +117,12 @@ public class JogadorDAO implements IJogador {
 	}
 
 	@Override
-	public void update(Jogador jogador) {
+	public void update(Ingrediente obj) {
 			StringBuffer buffer = new StringBuffer();
-	        buffer.append("UPDATE JOGADOR SET ");
-	        buffer.append(returnFieldValuesBD(jogador));
+	        buffer.append("UPDATE INGREDIENTE SET ");
+	        buffer.append(returnFieldValuesBD(obj));
 	        buffer.append(" WHERE id=");
-	        buffer.append(jogador.getId());
+	        buffer.append(obj.getId());
 	        String sql = buffer.toString();
 	        
 	    	try {
@@ -137,12 +137,12 @@ public class JogadorDAO implements IJogador {
 	}
 
 	@Override
-	public void insert(Jogador jogador) {
+	public void insert(Ingrediente obj) {
 			StringBuffer buffer = new StringBuffer();
-	        buffer.append("INSERT INTO JOGADOR (");
+	        buffer.append("INSERT INTO INGREDIENTE (");
 	        buffer.append(this.retornarCamposBD());
 	        buffer.append(") VALUES (");
-	        buffer.append(this.retornarValoresBD(jogador));
+	        buffer.append(this.retornarValoresBD(obj));
 	        buffer.append(")");
 	        String sql = buffer.toString();
 
@@ -157,29 +157,33 @@ public class JogadorDAO implements IJogador {
 	}
 		
 	protected String retornarCamposBD() {
-    	return "id, nome, dinheiro";
+    	return "id, valor, nome, tempo_necessario";
     }
     
-    protected String returnFieldValuesBD(Jogador j) {
+    protected String returnFieldValuesBD(Ingrediente obj) {
 
         StringBuffer buffer = new StringBuffer();
         buffer.append("id=");
-        buffer.append(retornarValorStringBD(j.getId().toString()));
+        buffer.append(retornarValorStringBD(obj.getNome()));
+        buffer.append(", valor=");		
+        buffer.append(retornarValorStringBD(obj.getValor().toString()));
         buffer.append(", nome=");
-        buffer.append(retornarValorStringBD(j.getNome()));
-        buffer.append(", dinheiro=");
-        buffer.append(retornarValorStringBD(j.getDinheiro().toString()));
+        buffer.append(retornarValorStringBD(obj.getNome()));
+        buffer.append(", tempo_necessario=");
+        buffer.append(retornarValorStringBD(obj.getTempoNecessario().toString()));;
 
         return buffer.toString();
     }
     
-    protected String retornarValoresBD(Jogador j) {
+    protected String retornarValoresBD(Ingrediente obj) {
     	return
-	        j.getId()
+	        obj.getId()
 	        + ", "
-	        + retornarValorStringBD(j.getNome())
+	        + obj.getValor()
 	        + ", "
-	        + j.getDinheiro();
+	        + retornarValorStringBD(obj.getNome())
+	        + ", "
+	        + obj.getTempoNecessario();
     }
     
     private String retornarValorStringBD(String valor) {
@@ -195,7 +199,7 @@ public class JogadorDAO implements IJogador {
     private void conectar() throws ClassNotFoundException, SQLException  {
         con = ConFactory.conexao(URL, NOME, SENHA);  
         con.setAutoCommit(false);
-        comando = con.createStatement();  
+        comando = con.createStatement();   
 	}	  
 
     public void commit() throws Exception {
@@ -204,6 +208,7 @@ public class JogadorDAO implements IJogador {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+    	
     }
     
 	public void cancelTransaction() throws Exception {
@@ -230,16 +235,17 @@ public class JogadorDAO implements IJogador {
 	    }
 	}
     
-    private Jogador buildJogador(ResultSet rs) {
-		Jogador jogador = new Jogador();
+    private Ingrediente buildIngrediente(ResultSet rs) {
+		Ingrediente obj = new Ingrediente();
 		try {  
-			jogador.setId(rs.getInt("id"));
-			jogador.setNome(rs.getString("nome"));
-			jogador.setDinheiro(rs.getFloat("dinheiro"));
+			obj.setId(rs.getInt("id"));
+			obj.setValor(rs.getFloat("valor"));
+			obj.setNome(rs.getString("nome"));
+			obj.setTempoNecessario(rs.getInt("tempo_necessario"));
 
 		} catch (SQLException e) { 
 			e.printStackTrace();
 		}  
-		return jogador;
+		return obj;
     }
 }
