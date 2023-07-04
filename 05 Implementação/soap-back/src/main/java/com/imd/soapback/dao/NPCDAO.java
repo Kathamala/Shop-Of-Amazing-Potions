@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Vector;
 
 import main.java.com.imd.soapback.connection.ConFactory;
-import main.java.com.imd.soapback.interfaceDAO.IJogador;
-import main.java.com.imd.soapback.model.Jogador;
+import main.java.com.imd.soapback.interfaceDAO.INPC;
+import main.java.com.imd.soapback.model.NPC;
 
-public class JogadorDAO implements IJogador {
+public class NPCDAO implements INPC {
 
 	private String 	URL;
 	private String NOME;
@@ -20,45 +20,45 @@ public class JogadorDAO implements IJogador {
 	private Connection con;  
     private Statement comando;
 	
-	public JogadorDAO(String server, String user, String password) throws SQLException {
+	public NPCDAO(String server, String user, String password) throws SQLException {
 		this.URL = server;
 		this.NOME = user;
 		this.SENHA = password;
 	}
 
 	@Override
-	public Jogador search(Integer id) {
-        Jogador jogador = new Jogador();
+	public NPC search(Integer id) {
+        NPC npc = new NPC();
 
 		try {
 			conectar();
-            String sql = "SELECT * FROM JOGADOR WHERE ID=" + id;
+            String sql = "SELECT * FROM NPC WHERE ID=" + id;
             ResultSet rs = comando.executeQuery(sql);
             if (rs.next()) {
-				jogador = this.buildJogador(rs);
+				npc = this.buildNPC(rs);
             }
         } catch (SQLException SQLe) {
             SQLe.printStackTrace();
         } catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-        return jogador;
+        return npc;
 	}
 
 	@Override
-	public List<Jogador> searchAll() {
+	public List<NPC> searchAll() {
 		synchronized (this) {
             ResultSet rs = null;
             
-	        List<Jogador> jogadores = new Vector<Jogador>();
+	        List<NPC> npcs = new Vector<NPC>();
 	        try {
 	        	conectar();
 				
 	            try {
-	                rs = comando.executeQuery("SELECT * FROM JOGADOR");
+	                rs = comando.executeQuery("SELECT * FROM NPC");
 	                while (rs.next()) {
-	    				Jogador e = this.buildJogador(rs);
-	    				jogadores.add(e);
+	    				NPC e = this.buildNPC(rs);
+	    				npcs.add(e);
 	                }
 	            } finally {
         			if (rs != null) {
@@ -81,14 +81,14 @@ public class JogadorDAO implements IJogador {
 	        } catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-	        return jogadores;
+	        return npcs;
         }
 	}
 	
 	@Override
-	public void remove(Jogador jogador) {
+	public void remove(NPC npc) {
         
-        	String sql ="DELETE FROM JOGADOR WHERE id=" + jogador.getId() + ";";
+        	String sql ="DELETE FROM NPC WHERE id=" + npc.getId() + ";";
 			
 	    	try {
 				conectar();
@@ -105,7 +105,7 @@ public class JogadorDAO implements IJogador {
 
         try {
         	conectar();
-    		String sql ="DELETE FROM JOGADOR WHERE id=" + this.retornarValorStringBD(id.toString());
+    		String sql ="DELETE FROM NPC WHERE id=" + this.retornarValorStringBD(id.toString());
     		System.out.println("%"+sql+"%");
 			comando.executeUpdate(sql);
 		} catch (SQLException e) {
@@ -117,12 +117,12 @@ public class JogadorDAO implements IJogador {
 	}
 
 	@Override
-	public void update(Jogador jogador) {
+	public void update(NPC npc) {
 			StringBuffer buffer = new StringBuffer();
-	        buffer.append("UPDATE JOGADOR SET ");
-	        buffer.append(returnFieldValuesBD(jogador));
+	        buffer.append("UPDATE NPC SET ");
+	        buffer.append(returnFieldValuesBD(npc));
 	        buffer.append(" WHERE id=");
-	        buffer.append(jogador.getId());
+	        buffer.append(npc.getId());
 	        String sql = buffer.toString();
 	        
 	    	try {
@@ -137,12 +137,12 @@ public class JogadorDAO implements IJogador {
 	}
 
 	@Override
-	public void insert(Jogador jogador) {
+	public void insert(NPC npc) {
 			StringBuffer buffer = new StringBuffer();
-	        buffer.append("INSERT INTO JOGADOR (");
+	        buffer.append("INSERT INTO NPC (");
 	        buffer.append(this.retornarCamposBD());
 	        buffer.append(") VALUES (");
-	        buffer.append(this.retornarValoresBD(jogador));
+	        buffer.append(this.retornarValoresBD(npc));
 	        buffer.append(")");
 	        String sql = buffer.toString();
 
@@ -157,29 +157,45 @@ public class JogadorDAO implements IJogador {
 	}
 		
 	protected String retornarCamposBD() {
-    	return "id, nome, dinheiro";
+    	return "id, nome, tempo_de_espera, verba_periodicidade, verba_valor_base, verba_multiplicador, jogador_id";
     }
     
-    protected String returnFieldValuesBD(Jogador j) {
+    protected String returnFieldValuesBD(NPC j) {
 
         StringBuffer buffer = new StringBuffer();
         buffer.append("id=");
         buffer.append(retornarValorStringBD(j.getId().toString()));
         buffer.append(", nome=");
         buffer.append(retornarValorStringBD(j.getNome()));
-        buffer.append(", dinheiro=");
-        buffer.append(retornarValorStringBD(j.getDinheiro().toString()));
+        buffer.append(", tempoDeEspera=");
+        buffer.append(retornarValorStringBD(j.getTempoDeEspera().toString()));
+        buffer.append(", verbaPeriodicidade=");
+        buffer.append(retornarValorStringBD(j.getVerbaPeriodicidade().toString()));
+        buffer.append(", verbaValorBase=");
+        buffer.append(retornarValorStringBD(j.getVerbaValorBase().toString()));
+        buffer.append(", verbaMultiplicador=");
+        buffer.append(retornarValorStringBD(j.getVerbaMultiplicador().toString()));
+        buffer.append(", jogadorId=");
+        buffer.append(retornarValorStringBD(j.getJogadorId().toString()));
 
         return buffer.toString();
     }
     
-    protected String retornarValoresBD(Jogador j) {
+    protected String retornarValoresBD(NPC npc) {
     	return
-	        j.getId()
+	        npc.getId()
 	        + ", "
-	        + retornarValorStringBD(j.getNome())
+	        + retornarValorStringBD(npc.getNome())
 	        + ", "
-	        + j.getDinheiro();
+	        + npc.getTempoDeEspera()
+	        + ", "
+	        + npc.getVerbaPeriodicidade()
+			+ ", "
+	        + npc.getVerbaValorBase()
+	        + ", "
+	        + npc.getVerbaMultiplicador()
+			+ ", "
+	        + npc.getJogadorId();
     }
     
     private String retornarValorStringBD(String valor) {
@@ -195,7 +211,7 @@ public class JogadorDAO implements IJogador {
     private void conectar() throws ClassNotFoundException, SQLException  {
         con = ConFactory.conexao(URL, NOME, SENHA);  
         con.setAutoCommit(false);
-        comando = con.createStatement();  
+        comando = con.createStatement();   
 	}	  
 
     public void commit() throws Exception {
@@ -231,16 +247,20 @@ public class JogadorDAO implements IJogador {
 	    }
 	}
     
-    private Jogador buildJogador(ResultSet rs) {
-		Jogador jogador = new Jogador();
+    private NPC buildNPC(ResultSet rs) {
+		NPC npc = new NPC();
 		try {  
-			jogador.setId(rs.getInt("id"));
-			jogador.setNome(rs.getString("nome"));
-			jogador.setDinheiro(rs.getFloat("dinheiro"));
+			npc.setId(rs.getInt("id"));
+			npc.setNome(rs.getString("nome"));
+			npc.setJogadorId(rs.getInt("jogador_id"));
+			npc.setTempoDeEspera(rs.getInt("tempo_de_espera"));
+			npc.setVerbaMultiplicador(rs.getFloat("verba_multiplicador"));
+			npc.setVerbaPeriodicidade(rs.getInt("verba_periodicidade"));
+			npc.setVerbaValorBase(rs.getFloat("verba_valor_base"));
 
 		} catch (SQLException e) { 
 			e.printStackTrace();
 		}  
-		return jogador;
+		return npc;
     }
 }

@@ -12,41 +12,42 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import main.java.com.imd.soapback.connection.ConFactory;
-import main.java.com.imd.soapback.dao.JogadorDAO;
-import main.java.com.imd.soapback.interfaceDAO.IJogador;
-import main.java.com.imd.soapback.model.Jogador;
+import main.java.com.imd.soapback.dao.NPCDAO;
+import main.java.com.imd.soapback.interfaceDAO.INPC;
+import main.java.com.imd.soapback.model.NPC;
 
 @Controller
-@RequestMapping(value = "/jogador")
-public class JogadorController {
+@RequestMapping(value = "/npc")
+public class NPCController {
     
     @GetMapping("/getAll")
     public ResponseEntity<?> getAll() throws SQLException {
         try{
-		    IJogador dao = new JogadorDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
-		    List<Jogador> list = dao.searchAll();
+            INPC dao = new NPCDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
+            List<NPC> list = dao.searchAll();
 
-            return new ResponseEntity<List<Jogador>>(list, null, HttpStatus.OK);
+            return new ResponseEntity<List<NPC>>(list, null, HttpStatus.OK);
         } catch(Exception e){
             return new ResponseEntity<String>("Exception: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
         }
     }
 
-    @PostMapping("/newPlayer")
-    public ResponseEntity<?> newPlayer(@RequestBody Jogador newData) throws Exception {
+    @PostMapping("/newNPC")
+    public ResponseEntity<?> newNPC(@RequestBody NPC newData) throws Exception {
         try{
-            IJogador dao = new JogadorDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
+            INPC dao = new NPCDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
 
             if(newData.getId() == null){
-                return new ResponseEntity<String>("Player id must not be null.", null, HttpStatus.FORBIDDEN);
+                return new ResponseEntity<String>("NPC id must not be null.", null, HttpStatus.FORBIDDEN);
             } else if(dao.search(newData.getId()).getId() != null){
-                return new ResponseEntity<String>("Player with id=" + newData.getId() + " already exists.", null, HttpStatus.FORBIDDEN);
+                return new ResponseEntity<String>("NPC with id=" + newData.getId() + " already exists.", null, HttpStatus.FORBIDDEN);
             }
 
+            
             dao.insert(newData);
-            ((JogadorDAO)dao).commit();
+            ((NPCDAO)dao).commit();
 
-            return new ResponseEntity<Jogador>(newData, null, HttpStatus.OK);
+            return new ResponseEntity<NPC>(newData, null, HttpStatus.OK);            
         } catch(Exception e){
             return new ResponseEntity<String>("Exception: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
         }

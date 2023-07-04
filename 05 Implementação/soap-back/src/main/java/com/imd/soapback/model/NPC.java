@@ -5,8 +5,6 @@ public class NPC {
     private Integer id;
 
     private String nome;
-
-    private Float dinheiro;
     
     private Integer tempoDeEspera;
 
@@ -14,22 +12,21 @@ public class NPC {
 
     private Float verbaValorBase;
 
-    private float verbaMultiplicador;
+    private Float verbaMultiplicador;
 
-    private Jogador jogador;
+    private Integer jogadorId;
 
     public NPC() {
     }
 
-    public NPC(Integer id, String nome, Float dinheiro, Integer tempoDeEspera, Integer verbaPeriodicidade, Float verbaValorBase, float verbaMultiplicador, Jogador jogador) {
+    public NPC(Integer id, String nome, Integer tempoDeEspera, Integer verbaPeriodicidade, Float verbaValorBase, Float verbaMultiplicador, Integer jogadorId) {
         this.id = id;
         this.nome = nome;
-        this.dinheiro = dinheiro;
         this.tempoDeEspera = tempoDeEspera;
         this.verbaPeriodicidade = verbaPeriodicidade;
         this.verbaValorBase = verbaValorBase;
         this.verbaMultiplicador = verbaMultiplicador;
-        this.jogador = jogador;
+        this.jogadorId = jogadorId;
     }
 
     public Integer getId() {
@@ -46,14 +43,6 @@ public class NPC {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public Float getDinheiro() {
-        return this.dinheiro;
-    }
-
-    public void setDinheiro(Float dinheiro) {
-        this.dinheiro = dinheiro;
     }
 
     public Integer getTempoDeEspera() {
@@ -80,19 +69,19 @@ public class NPC {
         this.verbaValorBase = verbaValorBase;
     }
 
-    public float getVerbaMultiplicador() {
+    public Float getVerbaMultiplicador() {
         return this.verbaMultiplicador;
     }
 
-    public void setVerbaMultiplicador(float verbaMultiplicador) {
+    public void setVerbaMultiplicador(Float verbaMultiplicador) {
         this.verbaMultiplicador = verbaMultiplicador;
     }
 
-    public Jogador getJogador() {
-        return this.jogador;
+    public Integer getJogadorId() {
+        return this.jogadorId;
     }
 
-    public void setJogador(Jogador jogador) {
-        this.jogador = jogador;
+    public void setJogadorId(Integer jogadorId) {
+        this.jogadorId = jogadorId;
     }
 }
