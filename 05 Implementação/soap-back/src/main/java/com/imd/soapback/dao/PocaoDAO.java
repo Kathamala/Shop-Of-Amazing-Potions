@@ -86,6 +86,47 @@ public class PocaoDAO implements IPocao {
 	}
 	
 	@Override
+	public List<Pocao> searchAllByJogadorId(Integer jogadorId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<Pocao> list = new Vector<Pocao>();
+	        try {
+	        	conectar();
+				
+	            try {
+					//TODO: CHANGE IMPLEMENTATION TO BRING PLAYER POTIONS
+	                rs = comando.executeQuery("SELECT * FROM POCAO");
+	                while (rs.next()) {
+	    				Pocao e = this.buildPocao(rs);
+	    				list.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return list;
+        }
+	}
+
+	@Override
 	public void remove(Pocao obj) {
         
         	String sql ="DELETE FROM POCAO WHERE id=" + obj.getId() + ";";

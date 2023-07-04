@@ -12,4 +12,5 @@ public interface IIngrediente {
 	 public void remove(Integer id);
 	 public void update(Ingrediente jogador);
 	 public void insert(Ingrediente jogador);
+	 public List<Ingrediente> searchAllByJogadorId(Integer jogadorId);
 }

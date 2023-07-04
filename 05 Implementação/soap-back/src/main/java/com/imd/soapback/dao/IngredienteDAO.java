@@ -86,6 +86,47 @@ public class IngredienteDAO implements IIngrediente {
 	}
 	
 	@Override
+	public List<Ingrediente> searchAllByJogadorId(Integer jogadorId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<Ingrediente> list = new Vector<Ingrediente>();
+	        try {
+	        	conectar();
+				
+	            try {
+					//TODO: CHANGE IMPLEMENTATION TO BRING PLAYER INGREDIENTS
+	                rs = comando.executeQuery("SELECT * FROM INGREDIENTE");
+	                while (rs.next()) {
+	    				Ingrediente e = this.buildIngrediente(rs);
+	    				list.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return list;
+        }
+	}
+
+	@Override
 	public void remove(Ingrediente obj) {
         
         	String sql ="DELETE FROM INGREDIENTE WHERE id=" + obj.getId() + ";";

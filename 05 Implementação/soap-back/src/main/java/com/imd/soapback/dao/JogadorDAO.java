@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import main.java.com.imd.soapback.connection.ConFactory;
 import main.java.com.imd.soapback.interfaceDAO.IJogador;
+import main.java.com.imd.soapback.model.Ingrediente;
 import main.java.com.imd.soapback.model.Jogador;
 
 public class JogadorDAO implements IJogador {
@@ -157,22 +158,22 @@ public class JogadorDAO implements IJogador {
 
 	@Override
 	public void insert(Jogador jogador) {
-			StringBuffer buffer = new StringBuffer();
-	        buffer.append("INSERT INTO JOGADOR (");
-	        buffer.append(this.retornarCamposBD());
-	        buffer.append(") VALUES (");
-	        buffer.append(this.retornarValoresBD(jogador));
-	        buffer.append(")");
-	        String sql = buffer.toString();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("INSERT INTO JOGADOR (");
+		buffer.append(this.retornarCamposBD());
+		buffer.append(") VALUES (");
+		buffer.append(this.retornarValoresBD(jogador));
+		buffer.append(")");
+		String sql = buffer.toString();
 
-	    	try {
-				conectar();
-	    		comando.execute(sql);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		try {
+			conectar();
+			comando.execute(sql);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 		
 	protected String retornarCamposBD() {
@@ -261,4 +262,47 @@ public class JogadorDAO implements IJogador {
 		}  
 		return jogador;
     }
+
+	public Integer getNextId(){
+		try{
+			conectar();
+			String sql = "SELECT MAX(id) as id FROM JOGADOR";
+			ResultSet rs = comando.executeQuery(sql);
+			if (rs.next()) {
+				return rs.getInt("id") + 1;
+			}
+		} catch (SQLException SQLe) {
+            SQLe.printStackTrace();
+        } catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return 0;
+	}
+
+	public void adicionarIngredienteInventario(Jogador jogador, Ingrediente ingrediente){
+		try {
+			conectar();
+			String sql = "SELECT * FROM JOGADOR_POSSUI_INGREDIENTE WHERE JOGADOR_id=" + jogador.getId() + " AND INGREDIENTE_id=" + ingrediente.getId();
+			ResultSet rs = comando.executeQuery(sql);
+			if (rs.next()) {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("UPDATE JOGADOR_POSSUI_INGREDIENTE SET quantidade = quantidade + 1 WHERE");
+				buffer.append("JOGADOR_id=" + jogador.getId() + " AND INGREDIENTE_id=" + ingrediente.getId());
+				sql = buffer.toString();
+			} else{
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("INSERT INTO JOGADOR_POSSUI_INGREDIENTE (JOGADOR_id, INGREDIENTE_id, quantidade) VALUES (");
+				buffer.append(jogador.getId() + ", " + ingrediente.getId() + ", 1");
+				buffer.append(")");
+				sql = buffer.toString();
+			}
+
+			comando.execute(sql);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -12,4 +12,5 @@ public interface IPocao {
 	 public void remove(Integer id);
 	 public void update(Pocao jogador);
 	 public void insert(Pocao jogador);
+	 public List<Pocao> searchAllByJogadorId(Integer jogadorId);
 }

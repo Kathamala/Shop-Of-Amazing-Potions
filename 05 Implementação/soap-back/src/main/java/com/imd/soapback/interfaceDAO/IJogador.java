@@ -2,6 +2,7 @@ package main.java.com.imd.soapback.interfaceDAO;
 
 import java.util.List;
 
+import main.java.com.imd.soapback.model.Ingrediente;
 import main.java.com.imd.soapback.model.Jogador;
 
 public interface IJogador {
@@ -13,4 +14,6 @@ public interface IJogador {
 	 public void remove(Integer id);
 	 public void update(Jogador jogador);
 	 public void insert(Jogador jogador);
+	 public Integer getNextId();
+	 public void adicionarIngredienteInventario(Jogador jogador, Ingrediente ingrediente);
 }

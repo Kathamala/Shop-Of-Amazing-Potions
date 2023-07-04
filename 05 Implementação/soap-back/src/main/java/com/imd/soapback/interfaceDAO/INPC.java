@@ -12,4 +12,5 @@ public interface INPC {
 	 public void remove(Integer id);
 	 public void update(NPC jogador);
 	 public void insert(NPC jogador);
+	 public List<NPC> searchAllByJogadorId(Integer jogadorId);
 }
