@@ -46,6 +46,50 @@ public class IngredienteDAO implements IIngrediente {
 	}
 
 	@Override
+	public List<Ingrediente> searchAllStore(Integer jogadorId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<Ingrediente> list = new Vector<Ingrediente>();
+	        try {
+	        	conectar();
+				
+	            try {
+	                rs = comando.executeQuery("(SELECT id, valor, nome, tempo_necessario, quantidade FROM JOGADOR_POSSUI_INGREDIENTE, INGREDIENTE\n" + //
+	                		"WHERE JOGADOR_POSSUI_INGREDIENTE.INGREDIENTE_id = INGREDIENTE.id AND JOGADOR_id = " + jogadorId + ")\n" + //
+	                		"UNION (SELECT id, valor, nome, tempo_necessario, 0 FROM INGREDIENTE WHERE id NOT IN\n" + //
+	                		"(SELECT id FROM JOGADOR_POSSUI_INGREDIENTE, INGREDIENTE\n" + //
+	                		"WHERE JOGADOR_POSSUI_INGREDIENTE.INGREDIENTE_id = INGREDIENTE.id AND JOGADOR_id = " + jogadorId + "))");
+	                while (rs.next()) {
+	    				Ingrediente e = this.buildIngrediente(rs);
+	    				list.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return list;
+        }
+	}	
+
+	@Override
 	public List<Ingrediente> searchAll() {
 		synchronized (this) {
             ResultSet rs = null;
@@ -95,8 +139,9 @@ public class IngredienteDAO implements IIngrediente {
 	        	conectar();
 				
 	            try {
-					//TODO: CHANGE IMPLEMENTATION TO BRING PLAYER INGREDIENTS
-	                rs = comando.executeQuery("SELECT * FROM INGREDIENTE");
+	                rs = comando.executeQuery("SELECT id, valor, nome, tempo_necessario, quantidade FROM INGREDIENTE, JOGADOR_POSSUI_INGREDIENTE " +
+						"WHERE INGREDIENTE.id = JOGADOR_POSSUI_INGREDIENTE.INGREDIENTE_id " +
+						"AND JOGADOR_id = " + jogadorId);
 	                while (rs.next()) {
 	    				Ingrediente e = this.buildIngrediente(rs);
 	    				list.add(e);
@@ -283,7 +328,9 @@ public class IngredienteDAO implements IIngrediente {
 			obj.setValor(rs.getFloat("valor"));
 			obj.setNome(rs.getString("nome"));
 			obj.setTempoNecessario(rs.getInt("tempo_necessario"));
-
+			try{
+				obj.setQuantidade(rs.getInt("quantidade"));
+			} catch(Exception e){}
 		} catch (SQLException e) { 
 			e.printStackTrace();
 		}  

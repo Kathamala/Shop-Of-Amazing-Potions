@@ -8,6 +8,7 @@ import com.imd.soapfront.helper.ResultHelper;
 import com.imd.soapfront.model.Jogador;
 import com.imd.soapfront.model.MenuState;
 
+
 public class SoapFrontApplication {
 
 	final static String URL_BASE = "http://localhost:8080";
@@ -55,17 +56,18 @@ public class SoapFrontApplication {
 				if(menu == MenuState.MAIN){
 					System.out.println(DIVIDER);
 					System.out.println("\t\tSHOP OF AMAZING PRODUCTS\t\t\n");		
-					System.out.println("\t\t     MENU PRINCIPAL     \t\t\n");	
+					System.out.println("\t\t     MENU PRINCIPAL     \t\t\n");
+					System.out.println("BEM VINDO(A), " + jogador.getNome() + "\n");
 					System.out.println("0) Sair do jogo");
 					System.out.println("1) Visualizar Inventário");
-					System.out.println("2) Clientes em Atendimento\n");
-					System.out.println("3) Abrir a Loja\n");
+					System.out.println("2) IR PARA: Clientes em Atendimento");
+					System.out.println("3) IR PARA: Loja");
 					System.out.println("4) Fabricar Poção\n");
 					System.out.println(DIVIDER);
 				} else if(menu == MenuState.NPCS){
 					System.out.println(DIVIDER);
 					System.out.println("\t\tSHOP OF AMAZING PRODUCTS\t\t\n");		
-					System.out.println("\t\t   CLIENTES EM ATENDIMENTO   \t\t\n");
+					System.out.println("\t\tCLIENTES EM ATENDIMENTO\t\t\n");
 					npcsAtendimento();
 					System.out.println("1) Vender Poção");
 					System.out.println("2) Voltar ao Menu Principal\n");
@@ -82,23 +84,26 @@ public class SoapFrontApplication {
 
 				System.out.print("Informe a ação que deseja realizar: ");
 				operation = scanner.nextInt();
-				clearConsole();
 				if(menu == MenuState.MAIN){
 					switch (operation) {
 						case 0: {
+							clearConsole();
 							System.out.println("Encerrando o SOAP\n");
 							break;
 						}
 						case 1: {
+							clearConsole();
 							visualizarInventario();
 							System.out.println("");
 							break;
 						}
 						case 2: {
+							clearConsole();
 							menu = MenuState.NPCS;
 							break;
 						}
 						case 3: {
+							clearConsole();
 							menu = MenuState.SHOP;
 							break;
 						}
@@ -111,6 +116,7 @@ public class SoapFrontApplication {
 							break;
 						}
 						case 2: {
+							clearConsole();
 							menu = MenuState.MAIN;
 							break;
 						}
@@ -123,6 +129,7 @@ public class SoapFrontApplication {
 							break;
 						}
 						case 2: {
+							clearConsole();
 							menu = MenuState.MAIN;
 							break;
 						}
@@ -136,39 +143,43 @@ public class SoapFrontApplication {
 
 	private static boolean login(Scanner scanner) throws IOException {
 		System.out.print("Digite o nome do jogador: ");
+		scanner.nextLine();
 		String playerName = scanner.nextLine();
 		
-		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/login/?nome=" + playerName, "GET", "");
+		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/login?name=" + playerName, "GET", "");
 
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage() + "\n");
+			System.out.println("Erro: " + result.getMessage());
 			return false;
 		}
 
+		jogador = Jogador.fromJson(result.getMessage());
 		menu = MenuState.MAIN;
 		return true;
 	}
 
 	private static boolean register(Scanner scanner) throws IOException {
 		System.out.print("Digite o nome do jogador: ");
+		scanner.nextLine();
 		String playerName = scanner.nextLine();
 		
-		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/register/?nome=" + playerName, "POST", "");
+		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/register?name=" + playerName, "POST", "");
 
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage() + "\n");
+			System.out.println("Erro: " + result.getMessage());
 			return false;
 		}
 
+		jogador = Jogador.fromJson(result.getMessage());
 		menu = MenuState.MAIN;
 		return true;
 	}
 
 	private static boolean visualizarInventario() throws IOException {	
-		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/visualizarInventario/?id=" + jogador.getId(), "GET", "");
+		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/visualizarInventario?jogadorId=" + jogador.getId(), "GET", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage() + "\n");
+			System.out.println("Erro: " + result.getMessage());
 			return false;
 		}
 
@@ -177,10 +188,10 @@ public class SoapFrontApplication {
 	}
 
 	private static boolean npcsAtendimento() throws IOException {	
-		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/npcsAtendimento/?id=" + jogador.getId(), "GET", "");
+		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/npcsAtendimento?jogadorId=" + jogador.getId(), "GET", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage() + "\n");
+			System.out.println("Erro: " + result.getMessage());
 			return false;
 		}
 
@@ -193,7 +204,7 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/abrirLoja?jogadorId=" + jogador.getId(), "GET", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage() + "\n");
+			System.out.println("Erro: " + result.getMessage());
 			return false;
 		}
 
@@ -204,12 +215,13 @@ public class SoapFrontApplication {
 
 	private static boolean venderPocao(Scanner scanner) throws IOException {
 		System.out.print("Digite o número do cliente: ");
+		scanner.nextLine();
 		Integer clientNumber = scanner.nextInt();
 
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/venderPocao?npcId=" + clientNumber + "&jogadorId=" + jogador.getId(), "POST", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage() + "\n");
+			System.out.println("Erro: " + result.getMessage());
 			return false;
 		}
 
@@ -219,12 +231,13 @@ public class SoapFrontApplication {
 
 	private static boolean comprarIngrediente(Scanner scanner) throws IOException {
 		System.out.print("Digite o número do ingrediente: ");
+		scanner.nextLine();
 		Integer ingredientNumber = scanner.nextInt();
 
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/comprarIngrediente?ingredienteId=" + ingredientNumber + "&jogadorId=" + jogador.getId(), "POST", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage() + "\n");
+			System.out.println("Erro: " + result.getMessage());
 			return false;
 		}
 

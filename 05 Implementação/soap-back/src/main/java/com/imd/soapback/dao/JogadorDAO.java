@@ -92,7 +92,7 @@ public class JogadorDAO implements IJogador {
 
 		try {
 			conectar();
-            String sql = "SELECT * FROM JOGADOR WHERE NOME=" + name;
+            String sql = "SELECT * FROM JOGADOR WHERE NOME=" + retornarValorStringBD(name);
             ResultSet rs = comando.executeQuery(sql);
             if (rs.next()) {
 				jogador = this.buildJogador(rs);
@@ -218,6 +218,7 @@ public class JogadorDAO implements IJogador {
         comando = con.createStatement();  
 	}	  
 
+	@Override
     public void commit() throws Exception {
     	try {
 			this.commitTransaction();
@@ -286,6 +287,7 @@ public class JogadorDAO implements IJogador {
 			String sql = "SELECT * FROM JOGADOR_POSSUI_INGREDIENTE WHERE JOGADOR_id=" + jogador.getId() + " AND INGREDIENTE_id=" + ingrediente.getId();
 			ResultSet rs = comando.executeQuery(sql);
 			if (rs.next()) {
+				//AJEITAR AQUI!
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("UPDATE JOGADOR_POSSUI_INGREDIENTE SET quantidade = quantidade + 1 WHERE");
 				buffer.append("JOGADOR_id=" + jogador.getId() + " AND INGREDIENTE_id=" + ingrediente.getId());
@@ -299,6 +301,8 @@ public class JogadorDAO implements IJogador {
 			}
 
 			comando.execute(sql);
+
+			//TODO: Reduzir dinheiro do jogador (transaction).
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {

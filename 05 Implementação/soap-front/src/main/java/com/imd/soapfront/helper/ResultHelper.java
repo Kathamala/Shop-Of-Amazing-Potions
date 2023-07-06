@@ -33,8 +33,13 @@ public class ResultHelper {
 
 	public static ResultHelper fromJson(StringBuffer json){
 		ResultHelper resultHelper = new ResultHelper();
-		resultHelper.setStatus(json.substring(0, json.indexOf(",")).contains("true"));
-		resultHelper.setMessage(json.substring(json.indexOf(",") + 12, json.length()-2));
+		resultHelper.setStatus(!json.toString().contains("FORBIDDEN"));
+		if(resultHelper.isStatus()){
+			resultHelper.setMessage(json.toString());	
+		} else{
+			resultHelper.setMessage(json.substring(json.indexOf(":")+1, json.length()));
+		}
+		
 		return resultHelper;
 	}
 }

@@ -95,8 +95,9 @@ public class PocaoDAO implements IPocao {
 	        	conectar();
 				
 	            try {
-					//TODO: CHANGE IMPLEMENTATION TO BRING PLAYER POTIONS
-	                rs = comando.executeQuery("SELECT * FROM POCAO");
+	                rs = comando.executeQuery("SELECT id, descricao, quantidade FROM POCAO, JOGADOR_POSSUI_POCAO\n" + //
+	                		"WHERE POCAO.id = JOGADOR_POSSUI_POCAO.POCAO_id\n" + //
+	                		"AND JOGADOR_id = " + jogadorId);
 	                while (rs.next()) {
 	    				Pocao e = this.buildPocao(rs);
 	    				list.add(e);
@@ -272,6 +273,7 @@ public class PocaoDAO implements IPocao {
 		try {  
 			obj.setId(rs.getInt("id"));
 			obj.setDescricao(rs.getString("descricao"));
+			obj.setQuantidade(rs.getInt("quantidade"));
 
 		} catch (SQLException e) { 
 			e.printStackTrace();

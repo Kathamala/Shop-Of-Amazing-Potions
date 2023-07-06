@@ -13,4 +13,5 @@ public interface IIngrediente {
 	 public void update(Ingrediente jogador);
 	 public void insert(Ingrediente jogador);
 	 public List<Ingrediente> searchAllByJogadorId(Integer jogadorId);
+	 List<Ingrediente> searchAllStore(Integer jogadorId);
 }

@@ -35,7 +35,7 @@ public class HttpRequestHandler {
         String inputLine;
         StringBuffer content = new StringBuffer();
         while ((inputLine = in.readLine()) != null) {
-            content.append(inputLine);
+            content.append(inputLine + "\n");
         }
         in.close();
         con.disconnect();

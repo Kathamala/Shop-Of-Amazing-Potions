@@ -37,12 +37,12 @@ public class MainGameController {
 		    Jogador obj = dao.searchByName(name);
 
             if(obj.getId() == null){
-                return new ResponseEntity<String>("Jogador " + name + " não encontrado.", null, HttpStatus.FORBIDDEN);    
+                return new ResponseEntity<String>("FORBIDDEN: Jogador " + name + " inexistente.", null, HttpStatus.FORBIDDEN);    
             }
 
             return new ResponseEntity<Jogador>(obj, null, HttpStatus.OK);
         } catch(Exception e){
-            return new ResponseEntity<String>("Exception: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("FORBIDDEN: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -53,19 +53,19 @@ public class MainGameController {
 		    Jogador obj = dao.searchByName(name);
 
             if(obj.getId() != null){
-                return new ResponseEntity<String>("Jogador " + name + " já existe.", null, HttpStatus.FORBIDDEN);    
+                return new ResponseEntity<String>("FORBIDDEN: Jogador " + name + " ja existe.", null, HttpStatus.FORBIDDEN);    
             }
 
             obj = new Jogador(dao.getNextId(), name, 100f);
             if(obj.getId() == 0){
-                return new ResponseEntity<String>("Não foi possível cadastrar o novo jogador.", null, HttpStatus.FORBIDDEN);    
+                return new ResponseEntity<String>("FORBIDDEN: Não foi possível cadastrar o novo jogador.", null, HttpStatus.FORBIDDEN);    
             }
 
             dao.insert(obj);
 
             return new ResponseEntity<Jogador>(obj, null, HttpStatus.OK);
         } catch(Exception e){
-            return new ResponseEntity<String>("Exception: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("FORBIDDEN: Exception: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -81,21 +81,29 @@ public class MainGameController {
             List<Pocao> pocoes = daoPocao.searchAllByJogadorId(jogadorId);
             List<Ingrediente> ingredientes = daoIngrediente.searchAllByJogadorId(jogadorId);
             
-            resultText += "\n\n######### POÇÕES #########";
+            resultText += "\n\n######### POCOES #########\n\n";
 
             for(Pocao p : pocoes){
                 resultText += p.getId() + ": " + p.getDescricao() + "\n";
             }
 
-            resultText += "\n\n###### INGREDIENTES #######";
+            if(pocoes.size() == 0){
+                resultText += "NENHUMA POCAO FABRICADA\n";
+            }
+
+            resultText += "\n\n###### INGREDIENTES #######\n\n";
 
             for(Ingrediente i : ingredientes){
-                resultText += i.getId() + ": " + i.getNome() + " | $" + i.getValor() + " | " + i.getTempoNecessario() + "\n";
-            }            
+                resultText += i.getId() + ": " + i.getNome() + " | $" + i.getValor() + " | " + i.getTempoNecessario() + " horas\n";
+            }        
+
+            if(ingredientes.size() == 0){
+                resultText += "NENHUM INGREDIENTE COMPRADO\n";
+            }
 
             return new ResponseEntity<String>(resultText, null, HttpStatus.OK);
         } catch(Exception e){
-            return new ResponseEntity<String>("Exception: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("FORBIDDEN: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -108,15 +116,19 @@ public class MainGameController {
 
             List<NPC> npcs = daoNPC.searchAllByJogadorId(jogadorId);
             
-            resultText += "\n\n######### CLIENTES #########";
+            resultText += "\n\n######### CLIENTES #########\n\n";
 
             for(NPC n : npcs){
                 resultText += n.getId() + ": " + n.getNome() + "\n";
-            }       
+            }
+
+            if(npcs.size() == 0){
+                resultText = "NENHUM CLIENTE EM ATENDIMENTO.";
+            }
 
             return new ResponseEntity<String>(resultText, null, HttpStatus.OK);
         } catch(Exception e){
-            return new ResponseEntity<String>("Exception: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("FORBIDDEN: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -127,17 +139,18 @@ public class MainGameController {
 		    IJogador dao = new JogadorDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
 		    Jogador jogador = dao.search(jogadorId);
 
-            String resultText = "Saldo Disponível: $" + jogador.getDinheiro() + "\n";
+            String resultText = "Saldo Atual: $" + jogador.getDinheiro() + "\n\n";
 
-            List<Ingrediente> ingredientes = daoIngrediente.searchAll();
+            List<Ingrediente> ingredientes = daoIngrediente.searchAllStore(jogadorId);
 
             for(Ingrediente i : ingredientes){
-                resultText += i.getId() + ": " + i.getNome() + " | $" + i.getValor() + " | " + i.getTempoNecessario() + "\n";
+                String qnt = i.getQuantidade() > 0 ? "(" + i.getQuantidade() + " no inventario)" : "";
+                resultText += i.getId() + ": " + i.getValor() + " | $" + i.getNome() + " | " + i.getTempoNecessario() + " horas " + qnt + "\n";
             }
 
             return new ResponseEntity<String>(resultText, null, HttpStatus.OK);
         } catch(Exception e){
-            return new ResponseEntity<String>("Exception: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("FORBIDDEN: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -148,7 +161,7 @@ public class MainGameController {
             //TODO
             return new ResponseEntity<String>("OK", null, HttpStatus.OK);
         } catch(Exception e){
-            return new ResponseEntity<String>("Exception: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("FORBIDDEN: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -162,18 +175,20 @@ public class MainGameController {
             Jogador jogador = dao.search(jogadorId);
             Ingrediente ingrediente = daoIngrediente.search(ingredienteId);
 
-            if(jogador == null){
-                return new ResponseEntity<String>("Jogador não encontrado.", null, HttpStatus.FORBIDDEN);
-            } else if(ingrediente == null){
-                return new ResponseEntity<String>("Ingrediente não encontrado.", null, HttpStatus.FORBIDDEN);
+            if(jogador.getId() == null){
+                return new ResponseEntity<String>("FORBIDDEN: Jogador inexistente.", null, HttpStatus.FORBIDDEN);
+            } else if(ingrediente.getId() == null){
+                return new ResponseEntity<String>("FORBIDDEN: Ingrediente inexistente.", null, HttpStatus.FORBIDDEN);
             } else if(jogador.getDinheiro() < ingrediente.getValor()){
-                return new ResponseEntity<String>("Saldo Insuficiente.", null, HttpStatus.FORBIDDEN);
+                return new ResponseEntity<String>("FORBIDDEN: Saldo insuficiente.", null, HttpStatus.FORBIDDEN);
             }
 
             dao.adicionarIngredienteInventario(jogador, ingrediente);
-            return new ResponseEntity<String>("OK", null, HttpStatus.OK);
+            dao.commit();
+            
+            return new ResponseEntity<String>("Compra realizada com sucesso!", null, HttpStatus.OK);
         } catch(Exception e){
-            return new ResponseEntity<String>("Exception: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("FORBIDDEN: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
         }
     }
 }

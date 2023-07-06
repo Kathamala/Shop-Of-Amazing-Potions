@@ -6,6 +6,8 @@ public class Pocao {
 
     private String descricao;
 
+    private Integer quantidade;
+
     public Pocao() {
 
     }
@@ -30,4 +32,12 @@ public class Pocao {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+
+    public Integer getQuantidade() {
+        return this.quantidade;
+    }
+
+    public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
+    }    
 }

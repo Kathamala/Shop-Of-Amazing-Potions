@@ -10,6 +10,8 @@ public class Ingrediente {
 
     private Integer tempoNecessario;
 
+    private Integer quantidade;
+
     public Ingrediente() {
 
     }
@@ -52,4 +54,12 @@ public class Ingrediente {
     public void setTempoNecessario(Integer tempoNecessario) {
         this.tempoNecessario = tempoNecessario;
     }    
+
+    public Integer getQuantidade() {
+        return this.quantidade;
+    }
+
+    public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
+    }       
 }

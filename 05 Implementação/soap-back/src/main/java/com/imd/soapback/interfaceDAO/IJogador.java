@@ -16,4 +16,5 @@ public interface IJogador {
 	 public void insert(Jogador jogador);
 	 public Integer getNextId();
 	 public void adicionarIngredienteInventario(Jogador jogador, Ingrediente ingrediente);
+	 public void commit() throws Exception;
 }

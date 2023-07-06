@@ -86,6 +86,46 @@ public class NPCDAO implements INPC {
 	}
 
 	@Override
+	public List<NPC> searchAll(Integer jogadorId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<NPC> npcs = new Vector<NPC>();
+	        try {
+	        	conectar();
+				
+	            try {
+	                rs = comando.executeQuery("SELECT * FROM NPC");
+	                while (rs.next()) {
+	    				NPC e = this.buildNPC(rs);
+	    				npcs.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return npcs;
+        }
+	}	
+
+	@Override
 	public List<NPC> searchAllByJogadorId(Integer jogadorId) {
 		synchronized (this) {
             ResultSet rs = null;
@@ -95,8 +135,7 @@ public class NPCDAO implements INPC {
 	        	conectar();
 				
 	            try {
-					//TODO: CHANGE IMPLEMENTATION TO BRING PLAYER NPCs
-	                rs = comando.executeQuery("SELECT * FROM NPC");
+	                rs = comando.executeQuery("SELECT * FROM NPC WHERE JOGADOR_id = " + jogadorId);
 	                while (rs.next()) {
 	    				NPC e = this.buildNPC(rs);
 	    				npcs.add(e);

@@ -41,4 +41,15 @@ public class Jogador {
     public void setDinheiro(Float dinheiro) {
         this.dinheiro = dinheiro;
     }
+
+    public static Jogador fromJson(String message) {
+        Jogador obj = new Jogador();
+        String current = message;
+        obj.setId(Integer.parseInt(current.substring(current.indexOf("id")+4, current.indexOf(","))));
+        current = current.substring(current.indexOf("nome"), current.length());
+        obj.setNome(current.substring(current.indexOf("nome")+6, current.indexOf(",")));
+        current = current.substring(current.indexOf("dinheiro"), current.length());
+        obj.setDinheiro(Float.parseFloat(current.substring(current.indexOf("dinheiro")+10, current.indexOf("}")-1)));
+        return obj;
+    }
 }
