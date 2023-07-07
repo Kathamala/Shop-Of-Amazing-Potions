@@ -17,4 +17,6 @@ public interface IPocao {
 	 public Boolean pocaoCuraNPC(Integer pocaoId, Integer npcId);
 	 public Boolean pocaoContemAlergiaNPC(Integer pocaoId, Integer npcId);
 	 public Boolean jogadorPossuiPocao(Integer pocaoId, Integer jogadorId);
+	 public void criarPocao(List<Integer> ingredientesId, String descricaoPocao, Integer jogadorId);
+	 public void commit() throws Exception;
 }

@@ -46,6 +46,28 @@ public class IngredienteDAO implements IIngrediente {
 	}
 
 	@Override
+	public Boolean jogadorPossuiIngrediente(Integer ingredienteId, Integer jogadorId) {
+        Ingrediente obj = new Ingrediente();
+
+		try {
+			conectar();
+            String sql = "SELECT id, valor, nome, tempo_necessario FROM INGREDIENTE, JOGADOR_POSSUI_INGREDIENTE\n" + //
+            		"WHERE INGREDIENTE.id = JOGADOR_POSSUI_INGREDIENTE.INGREDIENTE_id\n" + //
+            		"AND INGREDIENTE.id = " + ingredienteId + " AND JOGADOR_id = " + jogadorId + " AND quantidade > 0;";
+            ResultSet rs = comando.executeQuery(sql);
+            if (rs.next()) {
+				obj = this.buildIngrediente(rs);
+            }
+        } catch (SQLException SQLe) {
+            SQLe.printStackTrace();
+        } catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+        return obj.getId() != null;
+	}
+
+
+	@Override
 	public List<Ingrediente> searchAllByPocaoIdAndJogadorId(Integer pocaoId, Integer jogadorId) {
 		synchronized (this) {
             ResultSet rs = null;
@@ -271,7 +293,7 @@ public class IngredienteDAO implements IIngrediente {
 				
 	            try {
 	                rs = comando.executeQuery("SELECT id, valor, nome, tempo_necessario, quantidade FROM INGREDIENTE, JOGADOR_POSSUI_INGREDIENTE " +
-						"WHERE INGREDIENTE.id = JOGADOR_POSSUI_INGREDIENTE.INGREDIENTE_id " +
+						"WHERE INGREDIENTE.id = JOGADOR_POSSUI_INGREDIENTE.INGREDIENTE_id AND quantidade > 0 " +
 						"AND JOGADOR_id = " + jogadorId);
 	                while (rs.next()) {
 	    				Ingrediente e = this.buildIngrediente(rs);

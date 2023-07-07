@@ -86,7 +86,7 @@ public class MainGameController {
             List<Pocao> pocoes = daoPocao.searchAllByJogadorId(jogadorId);
             List<Ingrediente> ingredientes = daoIngrediente.searchAllByJogadorId(jogadorId);
             
-            resultText += "\n\n######### POCOES #########\n\n";
+            resultText += "\n\n######### POCOES #########\n";
 
             for(Pocao p : pocoes){
                 String qnt = " (" + p.getQuantidade() + " no inventario)";
@@ -124,11 +124,9 @@ public class MainGameController {
             String resultText = "";
 
             List<NPC> npcs = daoNPC.searchAllByJogadorId(jogadorId);
-            
-            resultText += "\n\n######### CLIENTES #########\n\n";
 
             for(NPC n : npcs){
-                resultText += n.getId() + ": " + n.getNome() + "\n\n";
+                resultText += "################# " + n.getId() + ": " + n.getNome() + " #################\n\n";
 
                 List<Condicoes> condicoes = daoCondicoes.searchAllByNPCAcometido(n.getId());
 
@@ -214,7 +212,7 @@ public class MainGameController {
 
             List<Pocao> pocoes = daoPocao.searchAllByJogadorId(jogadorId);
             
-            resultText += "\n\n######### POCOES #########\n\n";
+            resultText += "\n\n######### POCOES #########\n";
 
             for(Pocao p : pocoes){
                 String qnt = " (" + p.getQuantidade() + " no inventario)";
@@ -309,63 +307,36 @@ public class MainGameController {
     }
 
     //POCAO
-    @GetMapping("/listarPocoesVenda")
-    public ResponseEntity<?> listarPocoesVenda(@RequestParam Integer jogadorId) throws SQLException {
-        try{ 
-            IIngrediente daoIngrediente = new IngredienteDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
-            IPocao daoPocao = new PocaoDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
-
-            List<Pocao> pocoes = daoPocao.searchAllStore(jogadorId);
-            String resultText = "";
-
-            resultText += "\n\n######### POCOES #########\n\n";
-
-            for(Pocao p : pocoes){
-                String qnt = "(" + p.getQuantidade() + " no inventario)";
-                resultText += p.getId() + ": " + p.getDescricao() + " " + qnt + "\n\n";
-
-                resultText += "===> Ingredientes necessarios: \n";
-                List<Ingrediente> ingredientes = daoIngrediente.searchAllByPocaoIdAndJogadorId(p.getId(), jogadorId); 
-
-                for(Ingrediente i : ingredientes){
-                    String qnti = "(" + i.getQuantidade() + " no inventario)";
-                    resultText += "======> " + i.getId() + ": $" + i.getValor() + " | " + i.getNome() + " | " + i.getTempoNecessario() + " horas " + qnti + "\n";
-                }
-
-                resultText += "\n";
-            }
-
-            return new ResponseEntity<String>(resultText, null, HttpStatus.OK);
-        } catch(Exception e){
-            return new ResponseEntity<String>("FORBIDDEN: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
-        }
-    }
-
     @PostMapping("/fabricarPocao")
-    public ResponseEntity<?> fabricarPocao(@RequestParam Integer pocaoId, @RequestParam Integer jogadorId) throws SQLException {
+    public ResponseEntity<?> fabricarPocao(@RequestParam String ingredientesString, @RequestParam String descricaoPocao, @RequestParam Integer jogadorId) throws SQLException {
         try{ 
             IIngrediente daoIngrediente = new IngredienteDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
             IPocao daoPocao = new PocaoDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
 
-            Pocao pocao = daoPocao.search(pocaoId);
-            if(pocao.getId() == null){
-                return new ResponseEntity<String>("FORBIDDEN: Esta pocao nao existe.", null, HttpStatus.FORBIDDEN);
-            }
+            descricaoPocao = descricaoPocao.replaceAll("DspaceD", " ");
 
-            List<Ingrediente> ingredientes = daoIngrediente.searchAllByPocaoIdAndJogadorId(pocaoId, jogadorId); 
+            String[] ingredientesStringId = ingredientesString.split(",");
             List<Integer> ingredientesId = new ArrayList<Integer>();
-            
-            for(Ingrediente i : ingredientes){
-                if(i.getQuantidade() == 0){
-                    return new ResponseEntity<String>("FORBIDDEN: Voce nao possui a quantidade necessaria de ingredientes para fabricar a pocao.", null, HttpStatus.FORBIDDEN);
-                }
-                ingredientesId.add(i.getId());
+
+            for(String s : ingredientesStringId){
+                try{
+                    Integer i = Integer.parseInt(s);
+                    if(!ingredientesId.contains(i)) {
+                        ingredientesId.add(i);
+                    }
+                    if(daoIngrediente.search(i).getId() == null){
+                        return new ResponseEntity<String>("FORBIDDEN: Ingrediente nao existe.", null, HttpStatus.FORBIDDEN);    
+                    }                    
+                    if(!daoIngrediente.jogadorPossuiIngrediente(i, jogadorId)){
+                        return new ResponseEntity<String>("FORBIDDEN: O jogador nao possui o ingrediente.", null, HttpStatus.FORBIDDEN);    
+                    }
+                } catch(Exception e){
+                    return new ResponseEntity<String>("FORBIDDEN: Valor invalido inserido.", null, HttpStatus.FORBIDDEN);
+                }                
             }
 
-            IJogador dao = new JogadorDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
-            dao.adicionarPocaoInventario(pocaoId, jogadorId, ingredientesId);
-
-            dao.commit();
+            daoPocao.criarPocao(ingredientesId, descricaoPocao, jogadorId);
+            daoPocao.commit();
 
             return new ResponseEntity<String>("Pocao fabricada com sucesso!", null, HttpStatus.OK);
         } catch(Exception e){

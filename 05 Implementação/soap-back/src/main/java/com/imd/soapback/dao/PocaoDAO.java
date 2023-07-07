@@ -247,7 +247,7 @@ public class PocaoDAO implements IPocao {
 				
 	            try {
 	                rs = comando.executeQuery("SELECT id, descricao, quantidade FROM POCAO, JOGADOR_POSSUI_POCAO\n" + //
-	                		"WHERE POCAO.id = JOGADOR_POSSUI_POCAO.POCAO_id\n" + //
+	                		"WHERE POCAO.id = JOGADOR_POSSUI_POCAO.POCAO_id AND quantidade > 0\n" + //
 	                		"AND JOGADOR_id = " + jogadorId);
 	                while (rs.next()) {
 	    				Pocao e = this.buildPocao(rs);
@@ -331,22 +331,22 @@ public class PocaoDAO implements IPocao {
 
 	@Override
 	public void insert(Pocao obj) {
-			StringBuffer buffer = new StringBuffer();
-	        buffer.append("INSERT INTO POCAO (");
-	        buffer.append(this.retornarCamposBD());
-	        buffer.append(") VALUES (");
-	        buffer.append(this.retornarValoresBD(obj));
-	        buffer.append(")");
-	        String sql = buffer.toString();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("INSERT INTO POCAO (");
+		buffer.append(this.retornarCamposBD());
+		buffer.append(") VALUES (");
+		buffer.append(this.retornarValoresBD(obj));
+		buffer.append(")");
+		String sql = buffer.toString();
 
-	    	try {
-				conectar();
-	    		comando.execute(sql);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		try {
+			conectar();
+			comando.execute(sql);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 		
 	protected String retornarCamposBD() {
@@ -432,4 +432,70 @@ public class PocaoDAO implements IPocao {
 		} catch(Exception e){}
 		return obj;
     }
+
+	public Integer getNextId(){
+		try{
+			conectar();
+			String sql = "SELECT MAX(id) as id FROM POCAO";
+			ResultSet rs = comando.executeQuery(sql);
+			if (rs.next()) {
+				return rs.getInt("id") + 1;
+			}
+		} catch (SQLException SQLe) {
+            SQLe.printStackTrace();
+        } catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return 0;
+	}
+
+	@Override
+	public void criarPocao(List<Integer> ingredientesId, String descricaoPocao, Integer jogadorId){
+		Integer novoId = getNextId();
+
+		//Criar pocao
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("INSERT INTO POCAO VALUES (");
+		buffer.append(novoId + ", " + retornarValorStringBD(descricaoPocao));
+		buffer.append(")");
+		String sql = buffer.toString();
+
+		//Atribuir ingredientes a pocao
+		StringBuffer buffer2 = new StringBuffer();
+		buffer2.append("INSERT INTO INGREDIENTE_COMPOE_POCAO VALUES ");
+		for(Integer i : ingredientesId){
+			buffer2.append("(" + i + ", " + novoId + "),");
+		}
+		String sql2 = buffer2.toString().substring(0, buffer2.toString().length()-1);
+
+		//Remover ingredientes do jogador
+		StringBuffer buffer3 = new StringBuffer();
+		buffer3.append("UPDATE JOGADOR_POSSUI_INGREDIENTE SET quantidade=quantidade-1 WHERE JOGADOR_id = " + jogadorId 
+		+ " AND (INGREDIENTE_id = " + ingredientesId.get(0) + " ");
+		for(Integer i : ingredientesId){
+			buffer3.append("OR INGREDIENTE_id = " + i + " ");
+		}
+		buffer3.append(")");
+		String sql3 = buffer3.toString();
+
+		//Atribuir pocao ao jogador
+		StringBuffer buffer4 = new StringBuffer();
+		buffer4.append("INSERT INTO JOGADOR_POSSUI_POCAO VALUES (");
+		buffer4.append(jogadorId + ", " + novoId + ", 1");
+		buffer4.append(")");
+		String sql4 = buffer4.toString();
+
+		try {
+			conectar();
+			comando.execute(sql);
+			comando.execute(sql2);
+			comando.execute(sql3);
+			comando.execute(sql4);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

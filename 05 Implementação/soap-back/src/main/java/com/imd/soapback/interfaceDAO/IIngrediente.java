@@ -17,4 +17,5 @@ public interface IIngrediente {
 	 public List<Ingrediente> searchAllByPocaoIdAndJogadorId(Integer pocaoId, Integer jogadorId);
 	 public List<Ingrediente> searchAllAlergiasNPC(Integer npcId);
 	 public List<Ingrediente> searchAllTrataCondicao(Integer condicaoId);
+	 public Boolean jogadorPossuiIngrediente(Integer ingredienteId, Integer jogadorId);
 }

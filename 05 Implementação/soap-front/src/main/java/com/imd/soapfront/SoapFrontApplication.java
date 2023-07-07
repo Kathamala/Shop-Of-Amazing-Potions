@@ -200,7 +200,7 @@ public class SoapFrontApplication {
 			return false;
 		}
 
-		System.out.println(result.getMessage() + "\n");
+		System.out.print(result.getMessage());
 		return true;
 	}
 
@@ -298,28 +298,31 @@ public class SoapFrontApplication {
 	}
 
 	private static boolean fabricarPocao(Scanner scanner) throws IOException {
-		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/listarPocoesVenda?jogadorId=" + jogador.getId(), "GET", "");
+		visualizarInventario();
 
-		if (!result.isStatus()) {
-			System.out.println("Erro:" + result.getMessage());
+		System.out.println();
+		System.out.print("Digite os ingredientes para montar a pocao (Formato: '1,2,3' / 0 para cancelar): ");
+		scanner.nextLine();
+		String ingredients = scanner.nextLine();
+
+		if(ingredients.equals("0")){
+			clearConsole();
 			return false;
 		}
 
-		System.out.println(result.getMessage());
+		System.out.print("Digite a descricao da pocao: ");
+		String potionName = scanner.nextLine();
 
-		System.out.print("Digite o número da poção: ");
-		scanner.nextLine();
-		Integer potionNumber = scanner.nextInt();
+		potionName = potionName.replaceAll(" ", "DspaceD");
 
-		result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/fabricarPocao?pocaoId=" + potionNumber + "&jogadorId=" + jogador.getId(), "POST", "");
+		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/fabricarPocao?ingredientesString=" + ingredients + "&descricaoPocao=" + potionName + "&jogadorId=" + jogador.getId(), "POST", "");
 
+		clearConsole();
 		if (!result.isStatus()) {
-			clearConsole();
 			System.out.print("Erro:" + result.getMessage());
 			return false;
 		}
 
-		clearConsole();
 		System.out.print(result.getMessage());
 
 		return true;
