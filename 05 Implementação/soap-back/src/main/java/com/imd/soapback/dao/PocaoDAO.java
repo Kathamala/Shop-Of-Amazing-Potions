@@ -90,6 +90,91 @@ public class PocaoDAO implements IPocao {
 	}	
 
 	@Override
+	public Boolean pocaoCuraNPC(Integer pocaoId, Integer npcId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<Pocao> list = new Vector<Pocao>();
+	        try {
+	        	conectar();
+				
+	            try {
+	                rs = comando.executeQuery("SELECT INGREDIENTE_id FROM INGREDIENTE_TRATA_CONDICOES, NPC_ACOMETIDO_POR_CONDICOES\n" + //
+	                		"WHERE INGREDIENTE_TRATA_CONDICOES.CONDICOES_id = NPC_ACOMETIDO_POR_CONDICOES.CONDICOES_id\n" + //
+	                		"AND NPC_id = " + npcId + " AND INGREDIENTE_id NOT IN (SELECT INGREDIENTE_id FROM INGREDIENTE_COMPOE_POCAO \n" + //
+	                		"WHERE POCAO_id = " + pocaoId + ")");
+	                while (rs.next()) {
+	    				Pocao e = this.buildPocao(rs);
+	    				list.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return list.isEmpty();
+        }
+	}	
+
+	@Override
+	public Boolean pocaoContemAlergiaNPC(Integer pocaoId, Integer npcId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<Pocao> list = new Vector<Pocao>();
+	        try {
+	        	conectar();
+				
+	            try {
+	                rs = comando.executeQuery("SELECT * FROM NPC_ALERGICO_A_INGREDIENTE, INGREDIENTE_COMPOE_POCAO\n" + //
+	                		"WHERE NPC_ALERGICO_A_INGREDIENTE.INGREDIENTE_id = INGREDIENTE_COMPOE_POCAO.INGREDIENTE_id\n" + //
+	                		"AND NPC_id = " + npcId + " AND POCAO_id = " + pocaoId);
+	                while (rs.next()) {
+	    				Pocao e = this.buildPocao(rs);
+	    				list.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return !list.isEmpty();
+        }
+	}	
+
+	@Override
 	public List<Pocao> searchAll() {
 		synchronized (this) {
             ResultSet rs = null;
@@ -314,16 +399,15 @@ public class PocaoDAO implements IPocao {
     
     private Pocao buildPocao(ResultSet rs) {
 		Pocao obj = new Pocao();
-		try {  
+		try{
 			obj.setId(rs.getInt("id"));
+		} catch(Exception e){}
+		try{
 			obj.setDescricao(rs.getString("descricao"));
-			try{
-				obj.setQuantidade(rs.getInt("quantidade"));
-			} catch(Exception e){}
-
-		} catch (SQLException e) { 
-			e.printStackTrace();
-		}  
+		} catch(Exception e){}
+		try{
+			obj.setQuantidade(rs.getInt("quantidade"));
+		} catch(Exception e){}
 		return obj;
     }
 }

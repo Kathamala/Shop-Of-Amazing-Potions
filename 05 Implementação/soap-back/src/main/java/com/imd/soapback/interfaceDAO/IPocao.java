@@ -14,4 +14,6 @@ public interface IPocao {
 	 public void insert(Pocao jogador);
 	 public List<Pocao> searchAllByJogadorId(Integer jogadorId);
 	 public List<Pocao> searchAllStore(Integer jogadorId);
+	 public Boolean pocaoCuraNPC(Integer pocaoId, Integer npcId);
+	 public Boolean pocaoContemAlergiaNPC(Integer pocaoId, Integer npcId);
 }

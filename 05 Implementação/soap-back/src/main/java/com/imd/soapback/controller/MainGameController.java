@@ -143,9 +143,9 @@ public class MainGameController {
 
                 for(Ingrediente i : alergias){
                     resultText += "======> " + i.getId() + ": " + i.getNome() + "\n";
-                }                
+                }
 
-                System.out.println();
+                resultText += "\n";
             }
 
             if(npcs.size() == 0){
@@ -203,32 +203,69 @@ public class MainGameController {
             return new ResponseEntity<String>("FORBIDDEN: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
         }
     }
+
+    @GetMapping("/listarPocoesVendaNPC")
+    public ResponseEntity<?> listarPocoesVendaNPC(@RequestParam Integer jogadorId) throws SQLException {
+        try{ 
+            IPocao daoPocao = new PocaoDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
+
+            String resultText = "";
+
+            List<Pocao> pocoes = daoPocao.searchAllByJogadorId(jogadorId);
+            
+            resultText += "\n\n######### POCOES #########\n\n";
+
+            for(Pocao p : pocoes){
+                String qnt = " (" + p.getQuantidade() + " no inventario)";
+                resultText += p.getId() + ": " + p.getDescricao() + qnt + "\n";
+            }
+
+            if(pocoes.size() == 0){
+                resultText += "NENHUMA POCAO FABRICADA\n";
+            }
+
+            return new ResponseEntity<String>(resultText, null, HttpStatus.OK);
+        } catch(Exception e){
+            return new ResponseEntity<String>("FORBIDDEN: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
+        }
+    }    
         
     @PostMapping("/venderPocao")
     public ResponseEntity<?> venderPocao(@RequestParam Integer pocaoId, @RequestParam Integer npcId, @RequestParam Integer jogadorId) throws SQLException {
         try{ 
-            IPocao daoPocap = new PocaoDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
-            Pocao pocao = daoPocap.search(pocaoId);
+            IPocao daoPocao = new PocaoDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
+            Pocao pocao = daoPocao.search(pocaoId);
 
             if(pocao.getId() == null){
                 return new ResponseEntity<String>("FORBIDDEN: Pocao inexistente.", null, HttpStatus.FORBIDDEN);
             }
 
             INPC daoNPC = new NPCDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
-            NPC npc = daoNPC.search(npcId);
+            NPC npc = daoNPC.searchAtendimento(npcId);
 
             if(npc.getId() == null){
                 return new ResponseEntity<String>("FORBIDDEN: Cliente inexistente.", null, HttpStatus.FORBIDDEN);
             }
 
-            //Verificar se a pocao de fato possui ingredientes para tratar as condicoes do npc.
-            //Verificar se a pocao não possui ingredientes que o npc seja alergico
+            if(!daoNPC.jogadorAtendeNPC(jogadorId, npcId)){
+                return new ResponseEntity<String>("FORBIDDEN: Este jogador nao atende este cliente.", null, HttpStatus.FORBIDDEN);
+            }            
 
-            //Tirar pocao do user
-            //Remover relação user-npc
-            //Adicionar 100 moedas na conta do usuario
+            if(!daoPocao.pocaoCuraNPC(pocaoId, npcId)){
+                return new ResponseEntity<String>("FORBIDDEN: Essa pocao nao atende aos requisitos para curar este cliente.", null, HttpStatus.FORBIDDEN);
+            }
 
-            return new ResponseEntity<String>("OK", null, HttpStatus.OK);
+            if(daoPocao.pocaoContemAlergiaNPC(pocaoId, npcId)){
+                return new ResponseEntity<String>("FORBIDDEN: Essa pocao contem ingredientes que o cliente possui alergia.", null, HttpStatus.FORBIDDEN);
+            }
+
+            IJogador daoJogador = new JogadorDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
+
+            daoJogador.venderPocao(pocaoId, npcId, jogadorId);
+
+            daoJogador.commit();
+
+            return new ResponseEntity<String>("Pocao vendida para o cliente com sucesso!", null, HttpStatus.OK);
         } catch(Exception e){
             return new ResponseEntity<String>("FORBIDDEN: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
         }

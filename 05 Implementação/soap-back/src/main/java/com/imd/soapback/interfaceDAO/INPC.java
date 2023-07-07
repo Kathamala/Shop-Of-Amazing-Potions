@@ -14,4 +14,6 @@ public interface INPC {
 	 public void insert(NPC jogador);
 	 public List<NPC> searchAllByJogadorId(Integer jogadorId);
 	 public List<NPC> searchAll(Integer jogadorId);
+	 public NPC searchAtendimento(Integer id);
+	 public Boolean jogadorAtendeNPC(Integer jogadorId, Integer npcId);
 }

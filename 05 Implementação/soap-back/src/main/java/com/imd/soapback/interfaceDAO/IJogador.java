@@ -17,5 +17,6 @@ public interface IJogador {
 	 public Integer getNextId();
 	 public void adicionarIngredienteInventario(Jogador jogador, Ingrediente ingrediente);
 	 public void adicionarPocaoInventario(Integer pocaoId, Integer jogadorId, List<Integer> ingredientesId);
+	 public void venderPocao(Integer pocaoId, Integer npcId, Integer jogadorId);
 	 public void commit() throws Exception;
 }

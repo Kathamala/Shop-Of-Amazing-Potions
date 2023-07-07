@@ -247,11 +247,20 @@ public class SoapFrontApplication {
 		scanner.nextLine();
 		Integer clientNumber = scanner.nextInt();
 
+		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/listarPocoesVendaNPC?jogadorId=" + jogador.getId(), "GET", "");
+		
+		if (!result.isStatus()) {
+			System.out.println("Erro:" + result.getMessage());
+			return false;
+		}
+
+		System.out.println(result.getMessage() + "\n");
+
 		System.out.print("Digite o número da poção: ");
 		scanner.nextLine();
 		Integer potionNumber = scanner.nextInt();		
 
-		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/venderPocao?pocaoId=" + potionNumber + "&npcId=" + clientNumber + "&jogadorId=" + jogador.getId(), "POST", "");
+		result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/venderPocao?pocaoId=" + potionNumber + "&npcId=" + clientNumber + "&jogadorId=" + jogador.getId(), "POST", "");
 		
 		if (!result.isStatus()) {
 			System.out.println("Erro:" + result.getMessage());

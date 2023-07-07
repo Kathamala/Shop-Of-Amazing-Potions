@@ -46,6 +46,45 @@ public class NPCDAO implements INPC {
 	}
 
 	@Override
+	public Boolean jogadorAtendeNPC(Integer jogadorId, Integer npcId) {
+        NPC npc = new NPC();
+
+		try {
+			conectar();
+            String sql = "SELECT * FROM NPC WHERE ID=" + npcId + " AND JOGADOR_id = " + jogadorId;
+            ResultSet rs = comando.executeQuery(sql);
+            if (rs.next()) {
+				npc = this.buildNPC(rs);
+            }
+        } catch (SQLException SQLe) {
+            SQLe.printStackTrace();
+        } catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+        return npc.getId() != null;
+	}	
+
+	@Override
+	public NPC searchAtendimento(Integer id) {
+        NPC npc = new NPC();
+
+		try {
+			conectar();
+            String sql = "SELECT * FROM NPC WHERE ID=" + id + " AND ID NOT IN ("
+			+ "SELECT NPC_id FROM TRANSACAO)";
+            ResultSet rs = comando.executeQuery(sql);
+            if (rs.next()) {
+				npc = this.buildNPC(rs);
+            }
+        } catch (SQLException SQLe) {
+            SQLe.printStackTrace();
+        } catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+        return npc;
+	}
+
+	@Override
 	public List<NPC> searchAll() {
 		synchronized (this) {
             ResultSet rs = null;
@@ -135,7 +174,8 @@ public class NPCDAO implements INPC {
 	        	conectar();
 				
 	            try {
-	                rs = comando.executeQuery("SELECT * FROM NPC WHERE JOGADOR_id = " + jogadorId);
+	                rs = comando.executeQuery("SELECT * FROM NPC WHERE JOGADOR_id = " + jogadorId + "\n" + //
+	                		"AND id NOT IN (SELECT NPC_id FROM TRANSACAO WHERE JOGADOR_id = " + jogadorId +")");
 	                while (rs.next()) {
 	    				NPC e = this.buildNPC(rs);
 	    				npcs.add(e);

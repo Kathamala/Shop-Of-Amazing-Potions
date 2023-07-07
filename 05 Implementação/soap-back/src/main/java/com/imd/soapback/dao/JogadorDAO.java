@@ -343,4 +343,37 @@ public class JogadorDAO implements IJogador {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void venderPocao(Integer pocaoId, Integer npcId, Integer jogadorId) {
+		//Remover poção do usuário
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("UPDATE JOGADOR_POSSUI_POCAO SET quantidade = quantidade-1 ");
+		buffer.append("WHERE JOGADOR_id = " + jogadorId + " AND POCAO_id = " + pocaoId);
+		String sql = buffer.toString();
+		
+		//Adicionar na tabela transação.
+		StringBuffer buffer2 = new StringBuffer();
+		buffer2.append("INSERT INTO TRANSACAO VALUES (");
+		buffer2.append(jogadorId + ", " + pocaoId + ", " + npcId + ")");
+		String sql2 = buffer2.toString();
+
+		//Adicionar 100 moedas na conta do usuario
+		StringBuffer buffer3 = new StringBuffer();
+		buffer3.append("UPDATE JOGADOR SET dinheiro=dinheiro+100 ");
+		buffer3.append("WHERE id = " + jogadorId);
+		String sql3 = buffer3.toString();
+
+		try {
+			conectar();
+			comando.execute(sql);
+			comando.execute(sql2);
+			comando.execute(sql3);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}     
+	}
+
 }
