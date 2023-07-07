@@ -13,5 +13,8 @@ public interface IIngrediente {
 	 public void update(Ingrediente jogador);
 	 public void insert(Ingrediente jogador);
 	 public List<Ingrediente> searchAllByJogadorId(Integer jogadorId);
-	 List<Ingrediente> searchAllStore(Integer jogadorId);
+	 public List<Ingrediente> searchAllStore(Integer jogadorId);
+	 public List<Ingrediente> searchAllByPocaoIdAndJogadorId(Integer pocaoId, Integer jogadorId);
+	 public List<Ingrediente> searchAllAlergiasNPC(Integer npcId);
+	 public List<Ingrediente> searchAllTrataCondicao(Integer condicaoId);
 }

@@ -46,6 +46,50 @@ public class PocaoDAO implements IPocao {
 	}
 
 	@Override
+	public List<Pocao> searchAllStore(Integer jogadorId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<Pocao> list = new Vector<Pocao>();
+	        try {
+	        	conectar();
+				
+	            try {
+	                rs = comando.executeQuery("(SELECT id, descricao, quantidade FROM JOGADOR_POSSUI_POCAO, POCAO\n" + //
+	                		"WHERE JOGADOR_POSSUI_POCAO.POCAO_id = POCAO.id AND JOGADOR_id = " + jogadorId + ")\n" + //
+	                		"UNION (SELECT id, descricao, 0 FROM POCAO WHERE id NOT IN\n" + //
+	                		"(SELECT id FROM JOGADOR_POSSUI_POCAO, POCAO\n" + //
+	                		"WHERE JOGADOR_POSSUI_POCAO.POCAO_id = POCAO.id AND JOGADOR_id = " + jogadorId + "))");
+	                while (rs.next()) {
+	    				Pocao e = this.buildPocao(rs);
+	    				list.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return list;
+        }
+	}	
+
+	@Override
 	public List<Pocao> searchAll() {
 		synchronized (this) {
             ResultSet rs = null;
@@ -273,7 +317,9 @@ public class PocaoDAO implements IPocao {
 		try {  
 			obj.setId(rs.getInt("id"));
 			obj.setDescricao(rs.getString("descricao"));
-			obj.setQuantidade(rs.getInt("quantidade"));
+			try{
+				obj.setQuantidade(rs.getInt("quantidade"));
+			} catch(Exception e){}
 
 		} catch (SQLException e) { 
 			e.printStackTrace();

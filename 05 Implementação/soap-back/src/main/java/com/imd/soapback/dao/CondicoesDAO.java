@@ -46,6 +46,48 @@ public class CondicoesDAO implements ICondicoes {
 	}
 
 	@Override
+	public List<Condicoes> searchAllByNPCAcometido(Integer npcId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<Condicoes> list = new Vector<Condicoes>();
+	        try {
+	        	conectar();
+				
+	            try {
+	                rs = comando.executeQuery("SELECT id, nome, descricao, intensidade FROM NPC_ACOMETIDO_POR_CONDICOES, CONDICOES\n" + //
+	                		"WHERE NPC_ACOMETIDO_POR_CONDICOES.CONDICOES_id = CONDICOES_id\n" + //
+	                		"AND NPC_id = " + npcId);
+	                while (rs.next()) {
+	    				Condicoes e = this.buildCondicoes(rs);
+	    				list.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return list;
+        }
+	}
+
+	@Override
 	public List<Condicoes> searchAll() {
 		synchronized (this) {
             ResultSet rs = null;

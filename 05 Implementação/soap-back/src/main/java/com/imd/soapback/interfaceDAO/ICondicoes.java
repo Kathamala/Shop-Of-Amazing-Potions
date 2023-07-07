@@ -12,4 +12,5 @@ public interface ICondicoes {
 	 public void remove(Integer id);
 	 public void update(Condicoes jogador);
 	 public void insert(Condicoes jogador);
+	 public List<Condicoes> searchAllByNPCAcometido(Integer npcId);
 }

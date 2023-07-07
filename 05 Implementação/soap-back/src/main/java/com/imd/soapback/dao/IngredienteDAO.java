@@ -46,6 +46,53 @@ public class IngredienteDAO implements IIngrediente {
 	}
 
 	@Override
+	public List<Ingrediente> searchAllByPocaoIdAndJogadorId(Integer pocaoId, Integer jogadorId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<Ingrediente> list = new Vector<Ingrediente>();
+	        try {
+	        	conectar();
+				
+	            try {
+	                rs = comando.executeQuery("(SELECT id, valor, nome, tempo_necessario, quantidade FROM JOGADOR_POSSUI_INGREDIENTE, INGREDIENTE, INGREDIENTE_COMPOE_POCAO\n" + //
+	                		"WHERE JOGADOR_POSSUI_INGREDIENTE.INGREDIENTE_id = INGREDIENTE.id\n" + //
+	                		"AND INGREDIENTE_COMPOE_POCAO.INGREDIENTE_id = INGREDIENTE.id AND POCAO_id = " + pocaoId + " AND JOGADOR_id = " + jogadorId +")\n" + //
+	                		"UNION (SELECT id, valor, nome, tempo_necessario, 0 FROM INGREDIENTE, INGREDIENTE_COMPOE_POCAO \n" + //
+	                		"WHERE INGREDIENTE_COMPOE_POCAO.INGREDIENTE_id = INGREDIENTE.id AND POCAO_id = " + pocaoId + " AND id NOT IN\n" + //
+	                		"(SELECT id FROM JOGADOR_POSSUI_INGREDIENTE, INGREDIENTE, INGREDIENTE_COMPOE_POCAO\n" + //
+	                		"WHERE JOGADOR_POSSUI_INGREDIENTE.INGREDIENTE_id = INGREDIENTE.id\n" + //
+	                		"AND INGREDIENTE_COMPOE_POCAO.INGREDIENTE_id = INGREDIENTE.id AND JOGADOR_id = " + jogadorId + "))");
+	                while (rs.next()) {
+	    				Ingrediente e = this.buildIngrediente(rs);
+	    				list.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return list;
+        }
+	}
+
+	@Override
 	public List<Ingrediente> searchAllStore(Integer jogadorId) {
 		synchronized (this) {
             ResultSet rs = null;
@@ -88,6 +135,90 @@ public class IngredienteDAO implements IIngrediente {
 	        return list;
         }
 	}	
+
+	@Override
+	public List<Ingrediente> searchAllAlergiasNPC(Integer npcId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<Ingrediente> list = new Vector<Ingrediente>();
+	        try {
+	        	conectar();
+				
+	            try {
+	                rs = comando.executeQuery("SELECT id, valor, nome, tempo_necessario FROM NPC_ALERGICO_A_INGREDIENTE, INGREDIENTE\n" + //
+	                		"WHERE NPC_ALERGICO_A_INGREDIENTE.INGREDIENTE_id = INGREDIENTE.id\n" + //
+	                		"AND NPC_id = " + npcId);
+	                while (rs.next()) {
+	    				Ingrediente e = this.buildIngrediente(rs);
+	    				list.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return list;
+        }
+	}
+
+	@Override
+	public List<Ingrediente> searchAllTrataCondicao(Integer condicaoId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<Ingrediente> list = new Vector<Ingrediente>();
+	        try {
+	        	conectar();
+				
+	            try {
+	                rs = comando.executeQuery("SELECT  id, valor, nome, tempo_necessario FROM INGREDIENTE_TRATA_CONDICOES, INGREDIENTE\n" + //
+	                		"WHERE INGREDIENTE_TRATA_CONDICOES.INGREDIENTE_id = INGREDIENTE.id\n" + //
+	                		"AND CONDICOES_id = " + condicaoId);
+	                while (rs.next()) {
+	    				Ingrediente e = this.buildIngrediente(rs);
+	    				list.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return list;
+        }
+	}
 
 	@Override
 	public List<Ingrediente> searchAll() {

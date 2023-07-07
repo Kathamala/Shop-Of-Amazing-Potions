@@ -70,7 +70,8 @@ public class SoapFrontApplication {
 					System.out.println("\t\tCLIENTES EM ATENDIMENTO\t\t\n");
 					npcsAtendimento();
 					System.out.println("1) Vender Poção");
-					System.out.println("2) Voltar ao Menu Principal\n");
+					System.out.println("2) Detalhar Condição");
+					System.out.println("3) Voltar ao Menu Principal\n");
 					System.out.println(DIVIDER);
 				} else if(menu == MenuState.SHOP){
 					System.out.println(DIVIDER);
@@ -107,6 +108,12 @@ public class SoapFrontApplication {
 							menu = MenuState.SHOP;
 							break;
 						}
+						case 4: {
+							clearConsole();
+							fabricarPocao(scanner);
+							System.out.println("");
+							break;
+						}						
 					}
 				} else if(menu == MenuState.NPCS){
 					switch (operation) {
@@ -116,6 +123,11 @@ public class SoapFrontApplication {
 							break;
 						}
 						case 2: {
+							detalharCondicao(scanner);
+							System.out.println("");
+							break;
+						}						
+						case 3: {
 							clearConsole();
 							menu = MenuState.MAIN;
 							break;
@@ -149,7 +161,7 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/login?name=" + playerName, "GET", "");
 
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage());
+			System.out.println("Erro:" + result.getMessage());
 			return false;
 		}
 
@@ -166,7 +178,7 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/register?name=" + playerName, "POST", "");
 
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage());
+			System.out.println("Erro:" + result.getMessage());
 			return false;
 		}
 
@@ -179,7 +191,7 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/visualizarInventario?jogadorId=" + jogador.getId(), "GET", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage());
+			System.out.println("Erro:" + result.getMessage());
 			return false;
 		}
 
@@ -191,7 +203,7 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/npcsAtendimento?jogadorId=" + jogador.getId(), "GET", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage());
+			System.out.println("Erro:" + result.getMessage());
 			return false;
 		}
 
@@ -204,7 +216,7 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/abrirLoja?jogadorId=" + jogador.getId(), "GET", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage());
+			System.out.println("Erro:" + result.getMessage());
 			return false;
 		}
 
@@ -213,15 +225,36 @@ public class SoapFrontApplication {
 		return true;
 	}
 
+	private static boolean detalharCondicao(Scanner scanner) throws IOException {
+		System.out.print("Digite o número da condição: ");
+		scanner.nextLine();
+		Integer conditionNumber = scanner.nextInt();
+
+		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/detalharCondicao?condicaoId=" + conditionNumber, "GET", "");
+		
+		if (!result.isStatus()) {
+			System.out.println("Erro:" + result.getMessage());
+			return false;
+		}
+
+		clearConsole();
+		System.out.println(result.getMessage() + "\n");
+		return true;
+	}
+
 	private static boolean venderPocao(Scanner scanner) throws IOException {
 		System.out.print("Digite o número do cliente: ");
 		scanner.nextLine();
 		Integer clientNumber = scanner.nextInt();
 
-		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/venderPocao?npcId=" + clientNumber + "&jogadorId=" + jogador.getId(), "POST", "");
+		System.out.print("Digite o número da poção: ");
+		scanner.nextLine();
+		Integer potionNumber = scanner.nextInt();		
+
+		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/venderPocao?pocaoId=" + potionNumber + "&npcId=" + clientNumber + "&jogadorId=" + jogador.getId(), "POST", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage());
+			System.out.println("Erro:" + result.getMessage());
 			return false;
 		}
 
@@ -237,11 +270,38 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/comprarIngrediente?ingredienteId=" + ingredientNumber + "&jogadorId=" + jogador.getId(), "POST", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro: " + result.getMessage());
+			System.out.println("Erro:" + result.getMessage());
 			return false;
 		}
 
-		System.out.println(result.getMessage() + "\n");
+		jogador = Jogador.fromJson(result.getMessage());
+		System.out.println("Compra realizada com sucesso!");
+		return true;
+	}
+
+	private static boolean fabricarPocao(Scanner scanner) throws IOException {
+		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/listarPocoesVenda?jogadorId=" + jogador.getId(), "GET", "");
+
+		if (!result.isStatus()) {
+			System.out.println("Erro:" + result.getMessage());
+			return false;
+		}
+
+		System.out.println(result.getMessage());
+
+		System.out.print("Digite o número da poção: ");
+		scanner.nextLine();
+		Integer potionNumber = scanner.nextInt();
+
+		result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/fabricarPocao?pocaoId=" + potionNumber + "&jogadorId=" + jogador.getId(), "POST", "");
+
+		if (!result.isStatus()) {
+			System.out.println("Erro:" + result.getMessage());
+			return false;
+		}
+
+		System.out.println(result.getMessage());
+
 		return true;
 	}
 

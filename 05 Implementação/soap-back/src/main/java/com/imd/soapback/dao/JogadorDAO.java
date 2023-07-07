@@ -287,9 +287,8 @@ public class JogadorDAO implements IJogador {
 			String sql = "SELECT * FROM JOGADOR_POSSUI_INGREDIENTE WHERE JOGADOR_id=" + jogador.getId() + " AND INGREDIENTE_id=" + ingrediente.getId();
 			ResultSet rs = comando.executeQuery(sql);
 			if (rs.next()) {
-				//AJEITAR AQUI!
 				StringBuffer buffer = new StringBuffer();
-				buffer.append("UPDATE JOGADOR_POSSUI_INGREDIENTE SET quantidade = quantidade + 1 WHERE");
+				buffer.append("UPDATE JOGADOR_POSSUI_INGREDIENTE SET quantidade = quantidade + 1 WHERE ");
 				buffer.append("JOGADOR_id=" + jogador.getId() + " AND INGREDIENTE_id=" + ingrediente.getId());
 				sql = buffer.toString();
 			} else{
@@ -301,8 +300,43 @@ public class JogadorDAO implements IJogador {
 			}
 
 			comando.execute(sql);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
-			//TODO: Reduzir dinheiro do jogador (transaction).
+	public void adicionarPocaoInventario(Integer pocaoId, Integer jogadorId, List<Integer> ingredientesId){
+		try {
+			conectar();
+			String sql = "SELECT * FROM JOGADOR_POSSUI_POCAO WHERE JOGADOR_id=" + jogadorId + " AND POCAO_id=" + pocaoId;
+			ResultSet rs = comando.executeQuery(sql);
+			if (rs.next()) {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("UPDATE JOGADOR_POSSUI_POCAO SET quantidade = quantidade + 1 WHERE ");
+				buffer.append("JOGADOR_id=" + jogadorId + " AND POCAO_id=" + pocaoId);
+				sql = buffer.toString();
+			} else{
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("INSERT INTO JOGADOR_POSSUI_POCAO (JOGADOR_id, POCAO_id, quantidade) VALUES (");
+				buffer.append(jogadorId + ", " + pocaoId + ", 1");
+				buffer.append(")");
+				sql = buffer.toString();
+			}
+
+			comando.execute(sql);
+
+			String sql2 = "UPDATE JOGADOR_POSSUI_INGREDIENTE SET quantidade=quantidade-1 WHERE JOGADOR_id = " + jogadorId 
+			+ " AND (INGREDIENTE_id = " + ingredientesId.get(0) + " ";
+
+			for(Integer i : ingredientesId){
+				sql2 += "OR INGREDIENTE_id = " + i + " ";
+			}
+
+			sql2 += ")";
+
+			comando.execute(sql2);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
