@@ -21,6 +21,7 @@ public class SoapFrontApplication {
 	public static void main(String[] args) throws IOException {
 		int operation = -1;
 		Scanner scanner = new Scanner(System.in);
+		clearConsole();
 		try {
 			//LOGIN
 			while (operation != 0 & menu == MenuState.LOGIN) {
@@ -161,12 +162,14 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/login?name=" + playerName, "GET", "");
 
 		if (!result.isStatus()) {
-			System.out.println("Erro:" + result.getMessage());
+			clearConsole();
+			System.out.print("Erro:" + result.getMessage());
 			return false;
 		}
 
 		jogador = Jogador.fromJson(result.getMessage());
 		menu = MenuState.MAIN;
+		clearConsole();
 		return true;
 	}
 
@@ -178,12 +181,14 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/register?name=" + playerName, "POST", "");
 
 		if (!result.isStatus()) {
-			System.out.println("Erro:" + result.getMessage());
+			clearConsole();
+			System.out.print("Erro:" + result.getMessage());
 			return false;
 		}
 
 		jogador = Jogador.fromJson(result.getMessage());
 		menu = MenuState.MAIN;
+		clearConsole();
 		return true;
 	}
 
@@ -263,10 +268,12 @@ public class SoapFrontApplication {
 		result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/venderPocao?pocaoId=" + potionNumber + "&npcId=" + clientNumber + "&jogadorId=" + jogador.getId(), "POST", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro:" + result.getMessage());
+			clearConsole();
+			System.out.print("Erro:" + result.getMessage());
 			return false;
 		}
 
+		clearConsole();
 		System.out.println(result.getMessage() + "\n");
 		return true;
 	}
@@ -279,11 +286,13 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/comprarIngrediente?ingredienteId=" + ingredientNumber + "&jogadorId=" + jogador.getId(), "POST", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro:" + result.getMessage());
+			clearConsole();
+			System.out.print("Erro:" + result.getMessage());
 			return false;
 		}
 
 		jogador = Jogador.fromJson(result.getMessage());
+		clearConsole();
 		System.out.println("Compra realizada com sucesso!");
 		return true;
 	}
@@ -305,11 +314,13 @@ public class SoapFrontApplication {
 		result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/fabricarPocao?pocaoId=" + potionNumber + "&jogadorId=" + jogador.getId(), "POST", "");
 
 		if (!result.isStatus()) {
-			System.out.println("Erro:" + result.getMessage());
+			clearConsole();
+			System.out.print("Erro:" + result.getMessage());
 			return false;
 		}
 
-		System.out.println(result.getMessage());
+		clearConsole();
+		System.out.print(result.getMessage());
 
 		return true;
 	}

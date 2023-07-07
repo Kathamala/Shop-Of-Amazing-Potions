@@ -90,6 +90,28 @@ public class PocaoDAO implements IPocao {
 	}	
 
 	@Override
+	public Boolean jogadorPossuiPocao(Integer pocaoId, Integer jogadorId) {
+        Pocao obj = new Pocao();
+
+		try {
+			conectar();
+            String sql = "SELECT id, descricao FROM POCAO, JOGADOR_POSSUI_POCAO\n" + //
+            		"WHERE POCAO.id = JOGADOR_POSSUI_POCAO.POCAO_id\n" + //
+            		"AND POCAO.id = " + pocaoId + " AND JOGADOR_id = " + jogadorId;
+            ResultSet rs = comando.executeQuery(sql);
+            if (rs.next()) {
+				obj = this.buildPocao(rs);
+            }
+        } catch (SQLException SQLe) {
+            SQLe.printStackTrace();
+        } catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+        return obj.getId() != null;
+	}
+
+
+	@Override
 	public Boolean pocaoCuraNPC(Integer pocaoId, Integer npcId) {
 		synchronized (this) {
             ResultSet rs = null;

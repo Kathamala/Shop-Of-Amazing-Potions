@@ -66,6 +66,7 @@ public class MainGameController {
             }
 
             dao.insert(obj);
+            dao.commit();
 
             return new ResponseEntity<Jogador>(obj, null, HttpStatus.OK);
         } catch(Exception e){
@@ -250,6 +251,10 @@ public class MainGameController {
             if(!daoNPC.jogadorAtendeNPC(jogadorId, npcId)){
                 return new ResponseEntity<String>("FORBIDDEN: Este jogador nao atende este cliente.", null, HttpStatus.FORBIDDEN);
             }            
+
+            if(!daoPocao.jogadorPossuiPocao(pocaoId, jogadorId)){
+                return new ResponseEntity<String>("FORBIDDEN: Este jogador nao possui esta pocao.", null, HttpStatus.FORBIDDEN);
+            }  
 
             if(!daoPocao.pocaoCuraNPC(pocaoId, npcId)){
                 return new ResponseEntity<String>("FORBIDDEN: Essa pocao nao atende aos requisitos para curar este cliente.", null, HttpStatus.FORBIDDEN);
