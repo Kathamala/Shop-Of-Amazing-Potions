@@ -70,7 +70,7 @@ public class NPCDAO implements INPC {
 
 		try {
 			conectar();
-            String sql = "SELECT * FROM NPC WHERE ID=" + id + " AND ID NOT IN ("
+            String sql = "SELECT * FROM NPC WHERE ID=" + id + " AND date_add(chegada, interval tempo_de_espera minute) > NOW() AND ID NOT IN ("
 			+ "SELECT NPC_id FROM TRANSACAO)";
             ResultSet rs = comando.executeQuery(sql);
             if (rs.next()) {
@@ -175,6 +175,7 @@ public class NPCDAO implements INPC {
 				
 	            try {
 	                rs = comando.executeQuery("SELECT * FROM NPC WHERE JOGADOR_id = " + jogadorId + "\n" + //
+							"AND date_add(chegada, interval tempo_de_espera minute) > NOW() " +
 	                		"AND id NOT IN (SELECT NPC_id FROM TRANSACAO WHERE JOGADOR_id = " + jogadorId +")");
 	                while (rs.next()) {
 	    				NPC e = this.buildNPC(rs);
@@ -277,7 +278,7 @@ public class NPCDAO implements INPC {
 	}
 		
 	protected String retornarCamposBD() {
-    	return "id, nome, tempo_de_espera, verba_periodicidade, verba_valor_base, verba_multiplicador, jogador_id";
+    	return "id, nome, tempo_de_espera, chegada, verba_periodicidade, verba_valor_base, verba_multiplicador, jogador_id";
     }
     
     protected String returnFieldValuesBD(NPC j) {
@@ -289,6 +290,8 @@ public class NPCDAO implements INPC {
         buffer.append(retornarValorStringBD(j.getNome()));
         buffer.append(", tempoDeEspera=");
         buffer.append(retornarValorStringBD(j.getTempoDeEspera().toString()));
+        buffer.append(", chegada=");
+        buffer.append(retornarValorStringBD(j.getChegada().toString()));		
         buffer.append(", verbaPeriodicidade=");
         buffer.append(retornarValorStringBD(j.getVerbaPeriodicidade().toString()));
         buffer.append(", verbaValorBase=");
@@ -308,7 +311,7 @@ public class NPCDAO implements INPC {
 	        + retornarValorStringBD(npc.getNome())
 	        + ", "
 	        + npc.getTempoDeEspera()
-	        + ", "
+	        + ", NOW() , "			
 	        + npc.getVerbaPeriodicidade()
 			+ ", "
 	        + npc.getVerbaValorBase()
@@ -374,6 +377,7 @@ public class NPCDAO implements INPC {
 			npc.setNome(rs.getString("nome"));
 			npc.setJogadorId(rs.getInt("jogador_id"));
 			npc.setTempoDeEspera(rs.getInt("tempo_de_espera"));
+			npc.setChegada(rs.getTimestamp("chegada"));
 			npc.setVerbaMultiplicador(rs.getFloat("verba_multiplicador"));
 			npc.setVerbaPeriodicidade(rs.getInt("verba_periodicidade"));
 			npc.setVerbaValorBase(rs.getFloat("verba_valor_base"));

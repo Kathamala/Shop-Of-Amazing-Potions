@@ -1,0 +1,290 @@
+{
+	"info": {
+		"_postman_id": "cfe3f643-a0aa-4f24-a393-247adec95b99",
+		"name": "SOAP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15774904"
+	},
+	"item": [
+		{
+			"name": "Jogador",
+			"item": [
+				{
+					"name": "GetAllJogador",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/soap/jogador/getAll",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"soap",
+								"jogador",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewPlayer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 3,\r\n    \"nome\": \"Oshiba\",\r\n    \"dinheiro\": 55\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/soap/jogador/newPlayer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"soap",
+								"jogador",
+								"newPlayer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pocao",
+			"item": [
+				{
+					"name": "GetAllPocao",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/soap/pocao/getAll",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"soap",
+								"pocao",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewPocao",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"descricao\": \"Cura para chatice\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/soap/pocao/newPocao",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"soap",
+								"pocao",
+								"newPocao"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ingredientes",
+			"item": [
+				{
+					"name": "GetAllIngrediente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/soap/ingrediente/getAll",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"soap",
+								"ingrediente",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewIngrediente",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"nome\": \"Cenoura\",\r\n    \"valor\": 5,\r\n    \"tempoNecessario\": 0.5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/soap/ingrediente/newIngrediente",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"soap",
+								"ingrediente",
+								"newIngrediente"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Condicoes",
+			"item": [
+				{
+					"name": "GetAllCondicoes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/soap/condicoes/getAll",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"soap",
+								"condicoes",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewCondicoes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"nome\": \"Chatice\",\r\n    \"descricao\": \"A pessoa fica muito muito chata, tipo, muito chata!\",\r\n    \"intensidade\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/soap/condicoes/newCondicoes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"soap",
+								"condicoes",
+								"newCondicoes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "NPC",
+			"item": [
+				{
+					"name": "GetAllNPC",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/soap/npc/getAll",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"soap",
+								"npc",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NewNPC",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"nome\": \"Marcel Oliveira\",\r\n    \"tempoDeEspera\": 2,\r\n    \"verbaPeriodicidade\": 4,\r\n    \"verbaValorBase\": 25.70,\r\n    \"verbaMultiplicador\": 2,\r\n    \"jogadorId\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/soap/npc/newNPC",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"soap",
+								"npc",
+								"newNPC"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

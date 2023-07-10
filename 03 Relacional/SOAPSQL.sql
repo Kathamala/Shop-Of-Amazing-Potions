@@ -21,10 +21,10 @@ INSERT INTO INGREDIENTE VALUES (5, 5, 'Sabao', 3);
 
 INSERT INTO CONDICOES VALUES (1, 'Chatice', 'A pessoa fica muito chata, tipo muito chata mesmo', 5);
 
-INSERT INTO NPC VALUES (1, 'Marcel Oliveira', 2, 4, 25.6, 2, 2);
-INSERT INTO NPC VALUES (2, 'Nelio Cacho', 3, 5, 26.8, 3, 3);
-INSERT INTO NPC VALUES (3, 'Girao', 1, 2, 21.8, 1, 1);
-INSERT INTO NPC VALUES (4, 'Tonhao', 1, 2, 21.8, 1, 1);
+INSERT INTO NPC VALUES (1, 'Marcel Oliveira', 2, NOW(), 4, 25.6, 2, 2);
+INSERT INTO NPC VALUES (2, 'Nelio Cacho', 3, NOW(), 5, 26.8, 3, 3);
+INSERT INTO NPC VALUES (3, 'Girao', 2, NOW(), 2, 21.8, 1, 1);
+INSERT INTO NPC VALUES (4, 'Tonhao', 15, NOW(), 2, 21.8, 1, 1);
 
 INSERT INTO NPC_ACOMETIDO_POR_CONDICOES VALUES (1, 3);
 INSERT INTO NPC_ACOMETIDO_POR_CONDICOES VALUES (1, 4);

@@ -1,6 +1,7 @@
 package main.java.com.imd.soapback.controller;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +85,7 @@ public class MainGameController {
             String resultText = "";
 
             List<Pocao> pocoes = daoPocao.searchAllByJogadorId(jogadorId);
+            List<Pocao> pocoesEmPreparo = daoPocao.searchAllByJogadorIdMaking(jogadorId);
             List<Ingrediente> ingredientes = daoIngrediente.searchAllByJogadorId(jogadorId);
             
             resultText += "\n\n######### POCOES #########\n";
@@ -93,15 +95,21 @@ public class MainGameController {
                 resultText += p.getId() + ": " + p.getDescricao() + qnt + "\n";
             }
 
-            if(pocoes.size() == 0){
-                resultText += "NENHUMA POCAO FABRICADA\n";
+            if(pocoesEmPreparo.size() != 0){
+                for(Pocao p : pocoesEmPreparo){
+                    resultText += p.getId() + ": " + p.getDescricao() + " (em preparo) \n";
+                }
+            }            
+
+            if(pocoes.size() + pocoesEmPreparo.size() == 0){
+                resultText += "\nNENHUMA POCAO FABRICADA\n";
             }
 
             resultText += "\n\n###### INGREDIENTES #######\n\n";
 
             for(Ingrediente i : ingredientes){
                 String qnt = "(" + i.getQuantidade() + " no inventario)";
-                resultText += i.getId() + ": " + i.getNome() + " | $" + i.getValor() + " | " + i.getTempoNecessario() + " horas " + qnt + "\n";
+                resultText += i.getId() + ": " + i.getNome() + " | $" + i.getValor() + " | " + i.getTempoNecessario() + " minuto(s) " + qnt + "\n";
             }        
 
             if(ingredientes.size() == 0){
@@ -126,7 +134,12 @@ public class MainGameController {
             List<NPC> npcs = daoNPC.searchAllByJogadorId(jogadorId);
 
             for(NPC n : npcs){
+                String pattern = "[dd/MM] HH:mm";
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
                 resultText += "################# " + n.getId() + ": " + n.getNome() + " #################\n\n";
+
+                resultText += "===> Chegada: " + simpleDateFormat.format(n.getChegada()) + " / Tempo de espera: " + n.getTempoDeEspera() + " minuto(s).\n\n";
 
                 List<Condicoes> condicoes = daoCondicoes.searchAllByNPCAcometido(n.getId());
 
@@ -170,7 +183,7 @@ public class MainGameController {
 
             for(Ingrediente i : ingredientes){
                 String qnt = "(" + i.getQuantidade() + " no inventario)";
-                resultText += i.getId() + ": $" + i.getValor() + " | " + i.getNome() + " | " + i.getTempoNecessario() + " horas " + qnt + "\n";
+                resultText += i.getId() + ": $" + i.getValor() + " | " + i.getNome() + " | " + i.getTempoNecessario() + " minuto(s) " + qnt + "\n";
             }
 
             return new ResponseEntity<String>(resultText, null, HttpStatus.OK);
@@ -220,7 +233,7 @@ public class MainGameController {
             }
 
             if(pocoes.size() == 0){
-                resultText += "NENHUMA POCAO FABRICADA\n";
+                resultText += "\nNENHUMA POCAO FABRICADA\n";
             }
 
             return new ResponseEntity<String>(resultText, null, HttpStatus.OK);

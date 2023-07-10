@@ -1,5 +1,7 @@
 package main.java.com.imd.soapback.model;
 
+import java.util.Date;
+
 public class NPC {
     
     private Integer id;
@@ -7,6 +9,8 @@ public class NPC {
     private String nome;
     
     private Integer tempoDeEspera;
+
+    private Date chegada;
 
     private Integer verbaPeriodicidade;
 
@@ -19,10 +23,11 @@ public class NPC {
     public NPC() {
     }
 
-    public NPC(Integer id, String nome, Integer tempoDeEspera, Integer verbaPeriodicidade, Float verbaValorBase, Float verbaMultiplicador, Integer jogadorId) {
+    public NPC(Integer id, String nome, Integer tempoDeEspera, Date chegada, Integer verbaPeriodicidade, Float verbaValorBase, Float verbaMultiplicador, Integer jogadorId) {
         this.id = id;
         this.nome = nome;
         this.tempoDeEspera = tempoDeEspera;
+        this.chegada = chegada;
         this.verbaPeriodicidade = verbaPeriodicidade;
         this.verbaValorBase = verbaValorBase;
         this.verbaMultiplicador = verbaMultiplicador;
@@ -52,6 +57,14 @@ public class NPC {
     public void setTempoDeEspera(Integer tempoDeEspera) {
         this.tempoDeEspera = tempoDeEspera;
     }
+
+    public Date getChegada() {
+        return this.chegada;
+    }
+
+    public void setChegada(Date chegada) {
+        this.chegada = chegada;
+    }    
 
     public Integer getVerbaPeriodicidade() {
         return this.verbaPeriodicidade;

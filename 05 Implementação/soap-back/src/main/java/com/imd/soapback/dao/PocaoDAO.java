@@ -32,7 +32,10 @@ public class PocaoDAO implements IPocao {
 
 		try {
 			conectar();
-            String sql = "SELECT * FROM POCAO WHERE ID=" + id;
+            String sql = "SELECT id, descricao, quantidade FROM POCAO, JOGADOR_POSSUI_POCAO WHERE ID= " + id + "\n" + //
+            		"AND date_add(inicio_preparo, interval (SELECT SUM(tempo_necessario)\n" + //
+            		"FROM INGREDIENTE_COMPOE_POCAO, INGREDIENTE\n" + //
+            		"WHERE id = INGREDIENTE_id AND POCAO_id = POCAO.id) minute) < NOW();";
             ResultSet rs = comando.executeQuery(sql);
             if (rs.next()) {
 				obj = this.buildPocao(rs);
@@ -248,6 +251,9 @@ public class PocaoDAO implements IPocao {
 	            try {
 	                rs = comando.executeQuery("SELECT id, descricao, quantidade FROM POCAO, JOGADOR_POSSUI_POCAO\n" + //
 	                		"WHERE POCAO.id = JOGADOR_POSSUI_POCAO.POCAO_id AND quantidade > 0\n" + //
+	                		"AND date_add(inicio_preparo, interval (SELECT SUM(tempo_necessario) \n" + //
+	                		"FROM INGREDIENTE_COMPOE_POCAO, INGREDIENTE\n" + //
+	                		"WHERE id = INGREDIENTE_id AND POCAO_id = POCAO.id) minute) < NOW()\n" + //
 	                		"AND JOGADOR_id = " + jogadorId);
 	                while (rs.next()) {
 	    				Pocao e = this.buildPocao(rs);
@@ -277,6 +283,52 @@ public class PocaoDAO implements IPocao {
 	        return list;
         }
 	}
+
+	@Override
+	public List<Pocao> searchAllByJogadorIdMaking(Integer jogadorId) {
+		synchronized (this) {
+            ResultSet rs = null;
+            
+	        List<Pocao> list = new Vector<Pocao>();
+	        try {
+	        	conectar();
+				
+	            try {
+	                rs = comando.executeQuery("SELECT id, descricao, quantidade FROM POCAO, JOGADOR_POSSUI_POCAO\n" + //
+	                		"WHERE POCAO.id = JOGADOR_POSSUI_POCAO.POCAO_id AND quantidade > 0\n" + //
+	                		"AND date_add(inicio_preparo, interval (SELECT SUM(tempo_necessario) \n" + //
+	                		"FROM INGREDIENTE_COMPOE_POCAO, INGREDIENTE\n" + //
+	                		"WHERE id = INGREDIENTE_id AND POCAO_id = POCAO.id) minute) > NOW()\n" + //
+	                		"AND JOGADOR_id = " + jogadorId);
+	                while (rs.next()) {
+	    				Pocao e = this.buildPocao(rs);
+	    				list.add(e);
+	                }
+	            } finally {
+        			if (rs != null) {
+        				try {
+        					rs.close();
+        				} catch (SQLException sqlEx) { 
+        				} 
+        				rs = null;
+        			}
+        			if (comando != null) {
+        				try {
+        					comando.close();
+        				} catch (SQLException sqlEx) { 
+        				}
+        				comando = null;
+        			}
+	            }
+	        } catch (SQLException SQLe) {
+	            SQLe.printStackTrace();
+	        } catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	        return list;
+        }
+	}
+
 
 	@Override
 	public void remove(Pocao obj) {
@@ -451,7 +503,7 @@ public class PocaoDAO implements IPocao {
 	}
 
 	@Override
-	public void criarPocao(List<Integer> ingredientesId, String descricaoPocao, Integer jogadorId){
+	public void criarPocao(List<Integer> ingredientesId, String descricaoPocao, Integer jogadorId) throws ClassNotFoundException, SQLException{
 		Integer novoId = getNextId();
 
 		//Criar pocao
@@ -482,20 +534,14 @@ public class PocaoDAO implements IPocao {
 		//Atribuir pocao ao jogador
 		StringBuffer buffer4 = new StringBuffer();
 		buffer4.append("INSERT INTO JOGADOR_POSSUI_POCAO VALUES (");
-		buffer4.append(jogadorId + ", " + novoId + ", 1");
+		buffer4.append(jogadorId + ", " + novoId + ", 1, NOW()");
 		buffer4.append(")");
 		String sql4 = buffer4.toString();
 
-		try {
-			conectar();
-			comando.execute(sql);
-			comando.execute(sql2);
-			comando.execute(sql3);
-			comando.execute(sql4);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		conectar();
+		comando.execute(sql);
+		comando.execute(sql2);
+		comando.execute(sql3);
+		comando.execute(sql4);
 	}
 }
