@@ -3,6 +3,7 @@ package com.imd.soapfront;
 import java.io.IOException;
 import java.util.Scanner;
 
+import com.imd.soapfront.helper.ASCIIArts;
 import com.imd.soapfront.helper.HttpRequestHandler;
 import com.imd.soapfront.helper.ResultHelper;
 import com.imd.soapfront.model.Jogador;
@@ -13,7 +14,7 @@ public class SoapFrontApplication {
 
 	final static String URL_BASE = "http://localhost:8080";
 	final static String MAINGAME_CONTROLLER = "/soap/maingame";
-	final static String DIVIDER = "######################################################\n";
+	final static String DIVIDER = "#########################################################################\n";
 
 	private static Jogador jogador;
 	private static MenuState menu = MenuState.LOGIN;
@@ -26,7 +27,7 @@ public class SoapFrontApplication {
 			//LOGIN
 			while (operation != 0 & menu == MenuState.LOGIN) {
 				System.out.println(DIVIDER);
-				System.out.println("\t\tSHOP OF AMAZING PRODUCTS\t\t\n");		
+				System.out.println("\t\t\tSHOP OF AMAZING PRODUCTS\n");		
 				System.out.println("0) Sair do jogo");
 				System.out.println("1) Entrar no jogo");
 				System.out.println("2) Cadastrar jogador\n");
@@ -36,7 +37,8 @@ public class SoapFrontApplication {
 				clearConsole();
 				switch (operation) {
 					case 0: {
-						System.out.println("Encerrando o SOAP\n");
+						System.out.println(ASCIIArts.SLEEPING_LADY);
+						System.out.println("Encerrando o SOAP. Até mais!\n"); 						
 						break;
 					}
 					case 1: {
@@ -56,9 +58,10 @@ public class SoapFrontApplication {
 			while (operation != 0) {
 				if(menu == MenuState.MAIN){
 					System.out.println(DIVIDER);
-					System.out.println("\t\tSHOP OF AMAZING PRODUCTS\t\t\n");		
-					System.out.println("\t\t     MENU PRINCIPAL     \t\t\n");
+					System.out.println("\t\t\tSHOP OF AMAZING PRODUCTS\t\t\n");
+					System.out.println("\t\t\t     MENU PRINCIPAL     \t\t\n");
 					System.out.println("BEM VINDO(A), " + jogador.getNome() + "\n");
+					System.out.println(ASCIIArts.SOAP_STORE);
 					System.out.println("0) Sair do jogo");
 					System.out.println("1) Visualizar Inventário");
 					System.out.println("2) IR PARA: Clientes em Atendimento");
@@ -67,8 +70,9 @@ public class SoapFrontApplication {
 					System.out.println(DIVIDER);
 				} else if(menu == MenuState.NPCS){
 					System.out.println(DIVIDER);
-					System.out.println("\t\tSHOP OF AMAZING PRODUCTS\t\t\n");		
-					System.out.println("\t\tCLIENTES EM ATENDIMENTO\t\t\n");
+					System.out.println("\t\t\tSHOP OF AMAZING PRODUCTS\t\t\n");		
+					System.out.println("\t\t\tCLIENTES EM ATENDIMENTO\t\t\n");
+					System.out.println(ASCIIArts.NPCS_IN_LINE);
 					npcsAtendimento();
 					System.out.println("1) Vender Poção");
 					System.out.println("2) Detalhar Condição");
@@ -76,8 +80,9 @@ public class SoapFrontApplication {
 					System.out.println(DIVIDER);
 				} else if(menu == MenuState.SHOP){
 					System.out.println(DIVIDER);
-					System.out.println("\t\tSHOP OF AMAZING PRODUCTS\t\t\n");		
-					System.out.println("\t\t  LOJA DE INGREDIENTES  \t\t\n");
+					System.out.println("\t\t\tSHOP OF AMAZING PRODUCTS\t\t\n");		
+					System.out.println("\t\t\t  LOJA DE INGREDIENTES  \t\t\n");
+					System.out.println(ASCIIArts.SHOP_OWNER);
 					abrirLoja();
 					System.out.println("1) Comprar Ingrediente");
 					System.out.println("2) Voltar ao Menu Principal\n");
@@ -90,7 +95,8 @@ public class SoapFrontApplication {
 					switch (operation) {
 						case 0: {
 							clearConsole();
-							System.out.println("Encerrando o SOAP\n");
+							System.out.println(ASCIIArts.SLEEPING_LADY);
+							System.out.println("Encerrando o SOAP. Até mais!\n"); 
 							break;
 						}
 						case 1: {
@@ -298,6 +304,7 @@ public class SoapFrontApplication {
 	}
 
 	private static boolean fabricarPocao(Scanner scanner) throws IOException {
+		System.out.println(ASCIIArts.POTION_DEN);
 		visualizarInventario();
 
 		System.out.println();
@@ -329,7 +336,7 @@ public class SoapFrontApplication {
 	}
 
 	private static void clearConsole(){
-		for(int i=0; i<50; i++){
+		for(int i=0; i<70; i++){
 			System.out.println("");
 		}
 	}
