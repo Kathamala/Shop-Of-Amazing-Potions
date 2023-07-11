@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import com.imd.soapfront.helper.ASCIIArts;
+import com.imd.soapfront.helper.Colors;
 import com.imd.soapfront.helper.HttpRequestHandler;
 import com.imd.soapfront.helper.ResultHelper;
 import com.imd.soapfront.model.Jogador;
@@ -14,7 +15,7 @@ public class SoapFrontApplication {
 
 	final static String URL_BASE = "http://localhost:8080";
 	final static String MAINGAME_CONTROLLER = "/soap/maingame";
-	final static String DIVIDER = "#########################################################################\n";
+	final static String DIVIDER = Colors.BLUE + "#########################################################################\n" + Colors.WHITE;
 
 	private static Jogador jogador;
 	private static MenuState menu = MenuState.LOGIN;
@@ -27,18 +28,18 @@ public class SoapFrontApplication {
 			//LOGIN
 			while (operation != 0 & menu == MenuState.LOGIN) {
 				System.out.println(DIVIDER);
-				System.out.println("\t\t\tSHOP OF AMAZING PRODUCTS\n");		
-				System.out.println("0) Sair do jogo");
+				printTitle();
+				System.out.println(Colors.CYAN + "0) Sair do jogo");
 				System.out.println("1) Entrar no jogo");
-				System.out.println("2) Cadastrar jogador\n");
+				System.out.println("2) Cadastrar jogador\n" + Colors.WHITE);
 				System.out.println(DIVIDER);
-				System.out.print("Informe a ação que deseja realizar: ");
+				System.out.print(Colors.GREEN + "Informe a ação que deseja realizar: " + Colors.WHITE);
 				operation = scanner.nextInt();
 				clearConsole();
 				switch (operation) {
 					case 0: {
-						System.out.println(ASCIIArts.SLEEPING_LADY);
-						System.out.println("Encerrando o SOAP. Até mais!\n"); 						
+						System.out.println(Colors.CYAN + ASCIIArts.SLEEPING_LADY + Colors.WHITE);
+						System.out.println(Colors.CYAN + "Encerrando o SOAP. Até mais!\n" + Colors.WHITE); 						
 						break;
 					}
 					case 1: {
@@ -58,45 +59,45 @@ public class SoapFrontApplication {
 			while (operation != 0) {
 				if(menu == MenuState.MAIN){
 					System.out.println(DIVIDER);
-					System.out.println("\t\t\tSHOP OF AMAZING PRODUCTS\t\t\n");
-					System.out.println("\t\t\t     MENU PRINCIPAL     \t\t\n");
+					printTitle();
+					System.out.println(Colors.CYAN + "\t\t\t     MENU PRINCIPAL     \t\t\n");
 					System.out.println("BEM VINDO(A), " + jogador.getNome() + "\n");
 					System.out.println(ASCIIArts.SOAP_STORE);
 					System.out.println("0) Sair do jogo");
 					System.out.println("1) Visualizar Inventário");
 					System.out.println("2) IR PARA: Clientes em Atendimento");
 					System.out.println("3) IR PARA: Loja");
-					System.out.println("4) Fabricar Poção\n");
+					System.out.println("4) Fabricar Poção\n" + Colors.WHITE);
 					System.out.println(DIVIDER);
 				} else if(menu == MenuState.NPCS){
 					System.out.println(DIVIDER);
-					System.out.println("\t\t\tSHOP OF AMAZING PRODUCTS\t\t\n");		
-					System.out.println("\t\t\tCLIENTES EM ATENDIMENTO\t\t\n");
+					printTitle();		
+					System.out.println(Colors.CYAN + "\t\t\tCLIENTES EM ATENDIMENTO\t\t\n");
 					System.out.println(ASCIIArts.NPCS_IN_LINE);
 					npcsAtendimento();
-					System.out.println("1) Vender Poção");
+					System.out.println(Colors.CYAN + "1) Vender Poção");
 					System.out.println("2) Detalhar Condição");
-					System.out.println("3) Voltar ao Menu Principal\n");
+					System.out.println("3) Voltar ao Menu Principal\n" + Colors.WHITE);
 					System.out.println(DIVIDER);
 				} else if(menu == MenuState.SHOP){
 					System.out.println(DIVIDER);
-					System.out.println("\t\t\tSHOP OF AMAZING PRODUCTS\t\t\n");		
-					System.out.println("\t\t\t  LOJA DE INGREDIENTES  \t\t\n");
+					printTitle();	
+					System.out.println(Colors.CYAN + "\t\t\t  LOJA DE INGREDIENTES  \t\t\n");
 					System.out.println(ASCIIArts.SHOP_OWNER);
 					abrirLoja();
-					System.out.println("1) Comprar Ingrediente");
-					System.out.println("2) Voltar ao Menu Principal\n");
+					System.out.println(Colors.CYAN + "1) Comprar Ingrediente");
+					System.out.println("2) Voltar ao Menu Principal\n" + Colors.WHITE);
 					System.out.println(DIVIDER);
 				}
 
-				System.out.print("Informe a ação que deseja realizar: ");
+				System.out.print(Colors.GREEN + "Informe a ação que deseja realizar: " + Colors.WHITE);
 				operation = scanner.nextInt();
 				if(menu == MenuState.MAIN){
 					switch (operation) {
 						case 0: {
 							clearConsole();
-							System.out.println(ASCIIArts.SLEEPING_LADY);
-							System.out.println("Encerrando o SOAP. Até mais!\n"); 
+							System.out.println(Colors.CYAN + ASCIIArts.SLEEPING_LADY);
+							System.out.println("Encerrando o SOAP. Até mais!\n" + Colors.WHITE); 
 							break;
 						}
 						case 1: {
@@ -161,7 +162,7 @@ public class SoapFrontApplication {
 	}
 
 	private static boolean login(Scanner scanner) throws IOException {
-		System.out.print("Digite o nome do jogador: ");
+		System.out.print(Colors.GREEN + "Digite o nome do jogador: " + Colors.WHITE);
 		scanner.nextLine();
 		String playerName = scanner.nextLine();
 		
@@ -169,7 +170,7 @@ public class SoapFrontApplication {
 
 		if (!result.isStatus()) {
 			clearConsole();
-			System.out.print("Erro:" + result.getMessage());
+			System.out.print(Colors.RED + "Erro:" + result.getMessage() + Colors.WHITE);
 			return false;
 		}
 
@@ -180,7 +181,7 @@ public class SoapFrontApplication {
 	}
 
 	private static boolean register(Scanner scanner) throws IOException {
-		System.out.print("Digite o nome do jogador: ");
+		System.out.print(Colors.GREEN + "Digite o nome do jogador: " + Colors.WHITE);
 		scanner.nextLine();
 		String playerName = scanner.nextLine();
 		
@@ -188,7 +189,7 @@ public class SoapFrontApplication {
 
 		if (!result.isStatus()) {
 			clearConsole();
-			System.out.print("Erro:" + result.getMessage());
+			System.out.print(Colors.RED + "Erro:" + result.getMessage() + Colors.WHITE);
 			return false;
 		}
 
@@ -202,11 +203,11 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/visualizarInventario?jogadorId=" + jogador.getId(), "GET", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro:" + result.getMessage());
+			System.out.println(Colors.RED + "Erro:" + result.getMessage() + Colors.WHITE);
 			return false;
 		}
 
-		System.out.print(result.getMessage());
+		System.out.print(Colors.BLUE + result.getMessage() + Colors.WHITE);
 		return true;
 	}
 
@@ -214,11 +215,11 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/npcsAtendimento?jogadorId=" + jogador.getId(), "GET", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro:" + result.getMessage());
+			System.out.println(Colors.RED + "Erro:" + result.getMessage() + Colors.WHITE);
 			return false;
 		}
 
-		System.out.println(result.getMessage() + "\n");
+		System.out.println(Colors.BLUE + result.getMessage() + "\n" + Colors.WHITE);
 		menu = MenuState.NPCS;
 		return true;
 	}
@@ -227,47 +228,47 @@ public class SoapFrontApplication {
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/abrirLoja?jogadorId=" + jogador.getId(), "GET", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro:" + result.getMessage());
+			System.out.println(Colors.RED + "Erro:" + result.getMessage() + Colors.WHITE);
 			return false;
 		}
 
-		System.out.println(result.getMessage() + "\n");
+		System.out.println(Colors.BLUE + result.getMessage() + "\n" + Colors.WHITE);
 		
 		return true;
 	}
 
 	private static boolean detalharCondicao(Scanner scanner) throws IOException {
-		System.out.print("Digite o número da condição: ");
+		System.out.print(Colors.GREEN + "Digite o número da condição: " + Colors.WHITE);
 		scanner.nextLine();
 		Integer conditionNumber = scanner.nextInt();
 
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/detalharCondicao?condicaoId=" + conditionNumber, "GET", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro:" + result.getMessage());
+			System.out.println(Colors.RED + "Erro:" + result.getMessage() + Colors.WHITE);
 			return false;
 		}
 
 		clearConsole();
-		System.out.println(result.getMessage() + "\n");
+		System.out.println(Colors.BLUE + result.getMessage() + "\n" + Colors.WHITE);
 		return true;
 	}
 
 	private static boolean venderPocao(Scanner scanner) throws IOException {
-		System.out.print("Digite o número do cliente: ");
+		System.out.print(Colors.GREEN + "Digite o número do cliente: " + Colors.WHITE);
 		scanner.nextLine();
 		Integer clientNumber = scanner.nextInt();
 
 		ResultHelper result = HttpRequestHandler.sendRequest(URL_BASE + MAINGAME_CONTROLLER + "/listarPocoesVendaNPC?jogadorId=" + jogador.getId(), "GET", "");
 		
 		if (!result.isStatus()) {
-			System.out.println("Erro:" + result.getMessage());
+			System.out.println(Colors.RED + "Erro:" + result.getMessage() + Colors.WHITE);
 			return false;
 		}
 
-		System.out.println(result.getMessage() + "\n");
+		System.out.println(Colors.BLUE + result.getMessage() + "\n" + Colors.WHITE);
 
-		System.out.print("Digite o número da poção: ");
+		System.out.print(Colors.GREEN + "Digite o número da poção: " + Colors.WHITE);
 		scanner.nextLine();
 		Integer potionNumber = scanner.nextInt();		
 
@@ -275,17 +276,17 @@ public class SoapFrontApplication {
 		
 		if (!result.isStatus()) {
 			clearConsole();
-			System.out.print("Erro:" + result.getMessage());
+			System.out.print(Colors.RED + "Erro:" + result.getMessage() + Colors.WHITE);
 			return false;
 		}
 
 		clearConsole();
-		System.out.println(result.getMessage() + "\n");
+		System.out.println(Colors.BLUE + result.getMessage() + "\n" + Colors.WHITE);
 		return true;
 	}
 
 	private static boolean comprarIngrediente(Scanner scanner) throws IOException {
-		System.out.print("Digite o número do ingrediente: ");
+		System.out.print(Colors.GREEN + "Digite o número do ingrediente: " + Colors.WHITE);
 		scanner.nextLine();
 		Integer ingredientNumber = scanner.nextInt();
 
@@ -293,22 +294,22 @@ public class SoapFrontApplication {
 		
 		if (!result.isStatus()) {
 			clearConsole();
-			System.out.print("Erro:" + result.getMessage());
+			System.out.print(Colors.RED + "Erro:" + result.getMessage() + Colors.WHITE);
 			return false;
 		}
 
 		jogador = Jogador.fromJson(result.getMessage());
 		clearConsole();
-		System.out.println("Compra realizada com sucesso!");
+		System.out.println(Colors.CYAN + "Compra realizada com sucesso!" + Colors.WHITE);
 		return true;
 	}
 
 	private static boolean fabricarPocao(Scanner scanner) throws IOException {
-		System.out.println(ASCIIArts.POTION_DEN);
+		System.out.println(Colors.CYAN + ASCIIArts.POTION_DEN + Colors.WHITE);
 		visualizarInventario();
 
 		System.out.println();
-		System.out.print("Digite os ingredientes para montar a pocao (Formato: '1,2,3' / 0 para cancelar): ");
+		System.out.print(Colors.GREEN + "Digite os ingredientes para montar a pocao (Formato: '1,2,3' / 0 para cancelar): " + Colors.WHITE);
 		scanner.nextLine();
 		String ingredients = scanner.nextLine();
 
@@ -317,7 +318,7 @@ public class SoapFrontApplication {
 			return false;
 		}
 
-		System.out.print("Digite a descricao da pocao: ");
+		System.out.print(Colors.GREEN + "Digite a descricao da pocao: " + Colors.WHITE);
 		String potionName = scanner.nextLine();
 
 		potionName = potionName.replaceAll(" ", "DspaceD");
@@ -326,11 +327,11 @@ public class SoapFrontApplication {
 
 		clearConsole();
 		if (!result.isStatus()) {
-			System.out.print("Erro:" + result.getMessage());
+			System.out.print(Colors.RED + "Erro:" + result.getMessage() + Colors.WHITE);
 			return false;
 		}
 
-		System.out.print(result.getMessage());
+		System.out.print(Colors.BLUE + result.getMessage() + Colors.BLUE);
 
 		return true;
 	}
@@ -340,4 +341,28 @@ public class SoapFrontApplication {
 			System.out.println("");
 		}
 	}
+
+	private static void printTitle(){
+		System.out.print("\t\t");		
+		System.out.print(Colors.RED + "S " + Colors.WHITE);
+		System.out.print(Colors.GREEN + "H " + Colors.WHITE);
+		System.out.print(Colors.YELLOW + "O " + Colors.WHITE);
+		System.out.print(Colors.BLUE + "P  " + Colors.WHITE);
+		System.out.print(Colors.PURPLE + "O " + Colors.WHITE);
+		System.out.print(Colors.CYAN + "F  " + Colors.WHITE);
+		System.out.print(Colors.RED + "A " + Colors.WHITE);
+		System.out.print(Colors.GREEN + "M " + Colors.WHITE);
+		System.out.print(Colors.YELLOW + "A " + Colors.WHITE);
+		System.out.print(Colors.BLUE + "Z " + Colors.WHITE);
+		System.out.print(Colors.PURPLE + "I " + Colors.WHITE);
+		System.out.print(Colors.CYAN + "N " + Colors.WHITE);
+		System.out.print(Colors.RED + "G  " + Colors.WHITE);
+		System.out.print(Colors.GREEN + "P " + Colors.WHITE);
+		System.out.print(Colors.YELLOW + "O " + Colors.WHITE);
+		System.out.print(Colors.BLUE + "T " + Colors.WHITE);												
+		System.out.print(Colors.PURPLE + "I " + Colors.WHITE);
+		System.out.print(Colors.CYAN + "O " + Colors.WHITE);
+		System.out.print(Colors.RED + "N " + Colors.WHITE);
+		System.out.println(Colors.GREEN + "S \n" + Colors.WHITE);
+	}	
 }
