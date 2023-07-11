@@ -55,8 +55,8 @@ public class CondicoesDAO implements ICondicoes {
 	        	conectar();
 				
 	            try {
-	                rs = comando.executeQuery("SELECT id, nome, descricao, intensidade FROM NPC_ACOMETIDO_POR_CONDICOES, CONDICOES\n" + //
-	                		"WHERE NPC_ACOMETIDO_POR_CONDICOES.CONDICOES_id = CONDICOES_id\n" + //
+	                rs = comando.executeQuery("SELECT DISTINCT id, nome, descricao, intensidade FROM NPC_ACOMETIDO_POR_CONDICOES, CONDICOES\n" + //
+	                		"WHERE NPC_ACOMETIDO_POR_CONDICOES.CONDICOES_id = CONDICOES.id\n" + //
 	                		"AND NPC_id = " + npcId);
 	                while (rs.next()) {
 	    				Condicoes e = this.buildCondicoes(rs);

@@ -345,7 +345,7 @@ public class JogadorDAO implements IJogador {
 	}
 
 	@Override
-	public void venderPocao(Integer pocaoId, Integer npcId, Integer jogadorId) {
+	public void venderPocao(Integer pocaoId, Integer npcId, Integer jogadorId, Float verba) {
 		//Remover poção do usuário
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("UPDATE JOGADOR_POSSUI_POCAO SET quantidade = quantidade-1 ");
@@ -360,7 +360,7 @@ public class JogadorDAO implements IJogador {
 
 		//Adicionar 100 moedas na conta do usuario
 		StringBuffer buffer3 = new StringBuffer();
-		buffer3.append("UPDATE JOGADOR SET dinheiro=dinheiro+100 ");
+		buffer3.append("UPDATE JOGADOR SET dinheiro=dinheiro + " + verba);
 		buffer3.append("WHERE id = " + jogadorId);
 		String sql3 = buffer3.toString();
 

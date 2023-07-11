@@ -139,7 +139,8 @@ public class MainGameController {
 
                 resultText += "################# " + n.getId() + ": " + n.getNome() + " #################\n\n";
 
-                resultText += "===> Chegada: " + simpleDateFormat.format(n.getChegada()) + " / Tempo de espera: " + n.getTempoDeEspera() + " minuto(s).\n\n";
+                resultText += "===> Chegada: " + simpleDateFormat.format(n.getChegada()) + " / Tempo de espera: " + n.getTempoDeEspera() + " minuto(s).\n";
+                resultText += "===> Verba: " + n.getVerbaValorBase() + ".\n\n";
 
                 List<Condicoes> condicoes = daoCondicoes.searchAllByNPCAcometido(n.getId());
 
@@ -277,7 +278,7 @@ public class MainGameController {
 
             IJogador daoJogador = new JogadorDAO(ConFactory.DAO_PATH, ConFactory.USER, ConFactory.PASSWORD);
 
-            daoJogador.venderPocao(pocaoId, npcId, jogadorId);
+            daoJogador.venderPocao(pocaoId, npcId, jogadorId, npc.getVerbaValorBase());
 
             daoJogador.commit();
 
