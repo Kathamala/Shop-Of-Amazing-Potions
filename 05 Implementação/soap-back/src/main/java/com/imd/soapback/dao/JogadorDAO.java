@@ -358,7 +358,7 @@ public class JogadorDAO implements IJogador {
 		buffer2.append(jogadorId + ", " + pocaoId + ", " + npcId + ")");
 		String sql2 = buffer2.toString();
 
-		//Adicionar 100 moedas na conta do usuario
+		//Adicionar a verba de moedas na conta do usuario
 		StringBuffer buffer3 = new StringBuffer();
 		buffer3.append("UPDATE JOGADOR SET dinheiro=dinheiro + " + verba);
 		buffer3.append("WHERE id = " + jogadorId);
