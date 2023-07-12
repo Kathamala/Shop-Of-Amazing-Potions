@@ -300,9 +300,19 @@ public class JogadorDAO implements IJogador {
 			}
 
 			comando.execute(sql);
+
+			StringBuffer buffer = new StringBuffer();
+	        buffer.append("UPDATE JOGADOR SET dinheiro = dinheiro - " + ingrediente.getValor());
+	        buffer.append(" WHERE id=" + jogador.getId());
+	        String sql2 = buffer.toString();
+
+			comando.execute(sql2);
+			commit(); 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -369,11 +379,15 @@ public class JogadorDAO implements IJogador {
 			comando.execute(sql);
 			comando.execute(sql2);
 			comando.execute(sql3);
+
+			commit();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}     
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 }

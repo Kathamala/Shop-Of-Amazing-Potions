@@ -280,8 +280,6 @@ public class MainGameController {
 
             daoJogador.venderPocao(pocaoId, npcId, jogadorId, npc.getVerbaValorBase());
 
-            daoJogador.commit();
-
             return new ResponseEntity<String>("Pocao vendida para o cliente com sucesso!", null, HttpStatus.OK);
         } catch(Exception e){
             return new ResponseEntity<String>("FORBIDDEN: " + e.getStackTrace(), null, HttpStatus.FORBIDDEN);
@@ -307,12 +305,7 @@ public class MainGameController {
             }
 
             dao.adicionarIngredienteInventario(jogador, ingrediente);
-            dao.commit();
-
             jogador.setDinheiro(jogador.getDinheiro() - ingrediente.getValor());
-            dao.update(jogador);
-
-            dao.commit();
 
             return new ResponseEntity<Jogador>(jogador, null, HttpStatus.OK);
         } catch(Exception e){
